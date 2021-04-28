@@ -10,7 +10,7 @@ class GraphController<V>(
     private val graph: GraphView<V> = GraphView(Graph.EmptyGraph())
 ): Controller() {
 
-    private var forceAtlas2: ForceAtlas2 = ForceAtlas2(graph)
+    var forceAtlas2: ForceAtlas2<V> = ForceAtlas2(graph)
 
     fun resetForceAtlas2() {
         forceAtlas2 = ForceAtlas2(graph)
