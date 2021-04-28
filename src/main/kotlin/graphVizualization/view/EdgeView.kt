@@ -1,6 +1,6 @@
-package graphApp.view
+package graphVizualization.view
 
-import graphApp.model.Edge
+import graphVizualization.model.Edge
 import javafx.scene.shape.Line
 
 class EdgeView<V>(

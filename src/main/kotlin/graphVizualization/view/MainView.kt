@@ -1,6 +1,6 @@
-package graphApp.view
+package graphVizualization.view
 
-import graphApp.model.Graph
+import graphVizualization.model.Graph
 import javafx.scene.Parent
 import tornadofx.*
 

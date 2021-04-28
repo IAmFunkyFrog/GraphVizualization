@@ -1,4 +1,4 @@
-package graphApp.model
+package graphVizualization.model
 
 import Vertex
 

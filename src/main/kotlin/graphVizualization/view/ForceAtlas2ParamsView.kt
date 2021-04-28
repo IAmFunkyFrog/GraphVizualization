@@ -1,16 +1,13 @@
-package graphApp.view
+package graphVizualization.view
 
-import graphApp.controller.ForceAtlas2
-import graphApp.controller.GraphController
-import javafx.beans.property.SimpleStringProperty
+import graphVizualization.controller.ForceAtlas2
+import graphVizualization.controller.GraphController
 import javafx.beans.value.ChangeListener
-import javafx.collections.FXCollections
 import javafx.scene.Parent
 import javafx.scene.control.TextField
 import javafx.scene.control.TextFormatter
 import javafx.util.converter.NumberStringConverter
 import tornadofx.View
-import tornadofx.combobox
 import tornadofx.vbox
 
 class ForceAtlas2ParamsView<V>(

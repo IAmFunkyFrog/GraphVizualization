@@ -1,4 +1,4 @@
-import graphApp.view.MainView
+import graphVizualization.view.MainView
 import tornadofx.App
 import tornadofx.launch
 

@@ -1,10 +1,8 @@
-package graphApp.controller
+package graphVizualization.controller
 
-import Vertex
-import graphApp.view.GraphView
-import graphApp.view.VertexView
+import graphVizualization.view.GraphView
+import graphVizualization.view.VertexView
 import javafx.geometry.Point2D
-import java.util.concurrent.locks.ReentrantLock
 import kotlin.math.pow
 
 //TODO: реализовать режим предотвращения коллизий

@@ -1,7 +1,7 @@
-package graphApp.view
+package graphVizualization.view
 
-import graphApp.controller.GraphController
-import graphApp.model.Graph
+import graphVizualization.controller.GraphController
+import graphVizualization.model.Graph
 import javafx.scene.layout.Pane
 import tornadofx.add
 import java.lang.IllegalArgumentException

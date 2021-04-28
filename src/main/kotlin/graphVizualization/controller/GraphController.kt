@@ -1,10 +1,9 @@
-package graphApp.controller
+package graphVizualization.controller
 
-import graphApp.model.Graph
-import graphApp.view.GraphView
+import graphVizualization.model.Graph
+import graphVizualization.view.GraphView
 import javafx.geometry.Point2D
 import javafx.scene.input.*
-import kotlinx.coroutines.*
 import tornadofx.Controller
 
 class GraphController<V>(

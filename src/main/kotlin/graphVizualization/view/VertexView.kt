@@ -1,9 +1,8 @@
-package graphApp.view
+package graphVizualization.view
 
 import Vertex
 import javafx.geometry.Point2D
 import javafx.scene.shape.Circle
-import java.awt.Color
 import kotlin.random.Random
 import kotlin.random.nextUInt
 class VertexView<V>(
