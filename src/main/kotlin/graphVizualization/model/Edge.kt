@@ -2,9 +2,9 @@ package graphVizualization.model
 
 import Vertex
 
-class Edge<V>(
-    val vertex1: Vertex<V>,
-    val vertex2: Vertex<V>,
+class Edge(
+    val vertex1: Vertex,
+    val vertex2: Vertex,
     var weight: Double
 ) {
     private var enabled = false

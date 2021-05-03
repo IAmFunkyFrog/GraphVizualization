@@ -6,8 +6,8 @@ import javafx.scene.layout.Pane
 import tornadofx.add
 import java.lang.IllegalArgumentException
 
-class GraphView<V>(
-    private val graph: Graph<V>
+class GraphView(
+    private val graph: Graph
 ) : Pane() {
     //TODO проверить с lazy
     val vertices = graph.vertices().associateWith {
@@ -18,14 +18,15 @@ class GraphView<V>(
             val vertexView2 = vertices[it.vertex2] ?: throw IllegalArgumentException()
             EdgeView(it, vertexView1, vertexView2)
         }
-    val controller: GraphController<V> = GraphController(this)
+    val controller: GraphController = GraphController(this)
 
     init {
-        vertices.values.forEach { v ->
-            add(v)
-        }
         edges.values.forEach { e ->
             add(e)
+        }
+        vertices.values.forEach { v ->
+            add(v)
+            add(v.label)
         }
         this.setOnScroll {
             controller.onScroll(it, this)

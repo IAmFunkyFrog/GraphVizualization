@@ -12,17 +12,15 @@ import kotlin.math.pow
 //TODO: Реализовать поддержку учета взвешенных ребер
 //TODO: Реализовать поддержку DissuadeHubs
 
-//TODO понять почему граф двигается вправо вниз с барнс хат
-//TODO понять почему так отличается результат с оптимизацией и без
-val VertexView<*>.traction
+val VertexView.traction
     get() = vertex.layoutData.appliedForce.add(vertex.layoutData.oldAppliedForce).multiply(0.5).magnitude()
 
-val VertexView<*>.swing
+val VertexView.swing
     get() = vertex.layoutData.appliedForce.add(vertex.layoutData.oldAppliedForce.multiply(-1.0)).multiply(0.5)
         .magnitude()
 
-class ForceAtlas2<V>(
-    private val graph: GraphView<V>,
+class ForceAtlas2(
+    private val graph: GraphView,
 ) {
     var vertices = graph.vertices.values.toList()
     var edges = graph.edges.values.toList()
@@ -31,7 +29,7 @@ class ForceAtlas2<V>(
     private var repulsion = Force.Factory.DistanceRepulsion()
     private var gravity = Force.Factory.DefaultGravity()
 
-    private lateinit var rootRegion: BurnsHutRegion<V>
+    private lateinit var rootRegion: BurnsHutRegion
 
     var repulsionCoefficient
         get() = repulsion.coefficient
@@ -61,7 +59,7 @@ class ForceAtlas2<V>(
         vertices.fold(0.0) { acc, vView -> acc + vView.centerY / vertices.size }
     )
 
-    fun doIteration(): Map<VertexView<V>, Point2D> {
+    fun doIteration(): Map<VertexView, Point2D> {
         //Preparation of vertices
         for (vertexView in vertices) vertexView.vertex.layoutData.prepareToIteration()
         if(burnsHut) rootRegion = BurnsHutRegion(vertices, burnsHutTheta)

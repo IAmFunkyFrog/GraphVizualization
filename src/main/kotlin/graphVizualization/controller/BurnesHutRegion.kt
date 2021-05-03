@@ -5,11 +5,11 @@ import javafx.geometry.Point2D
 import kotlin.math.nextDown
 import kotlin.math.nextUp
 
-class BurnsHutRegion<V>(
-    val vertices: List<VertexView<V>>,
+class BurnsHutRegion(
+    val vertices: List<VertexView>,
     theta: Double
 ) {
-    val subRegions: ArrayList<BurnsHutRegion<V>> = ArrayList()
+    val subRegions: ArrayList<BurnsHutRegion> = ArrayList()
 
     var theta: Double = theta
         set(value) {
@@ -58,13 +58,13 @@ class BurnsHutRegion<V>(
         makeSubRegion(downRights)
     }
 
-    private fun makeSubRegion(subVertices: List<VertexView<V>>) {
+    private fun makeSubRegion(subVertices: List<VertexView>) {
         if (subVertices.isNotEmpty()) {
-            if (subVertices.size < vertices.size) subRegions.add(BurnsHutRegion<V>(subVertices, theta))
+            if (subVertices.size < vertices.size) subRegions.add(BurnsHutRegion(subVertices, theta))
             else {
                 for (vertex in subVertices) {
                     val oneVertexList = listOf(vertex)
-                    subRegions.add(BurnsHutRegion<V>(oneVertexList, theta))
+                    subRegions.add(BurnsHutRegion(oneVertexList, theta))
                 }
             }
         }
