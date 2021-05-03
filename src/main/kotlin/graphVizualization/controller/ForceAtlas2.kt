@@ -3,6 +3,7 @@ package graphVizualization.controller
 import graphVizualization.view.GraphView
 import graphVizualization.view.VertexView
 import javafx.geometry.Point2D
+import tornadofx.runLater
 import kotlin.math.pow
 
 //TODO: реализовать режим предотвращения коллизий
@@ -11,6 +12,8 @@ import kotlin.math.pow
 //TODO: Реализовать поддержку учета взвешенных ребер
 //TODO: Реализовать поддержку DissuadeHubs
 
+//TODO понять почему граф двигается вправо вниз с барнс хат
+//TODO понять почему так отличается результат с оптимизацией и без
 val VertexView<*>.traction
     get() = vertex.layoutData.appliedForce.add(vertex.layoutData.oldAppliedForce).multiply(0.5).magnitude()
 
@@ -21,14 +24,14 @@ val VertexView<*>.swing
 class ForceAtlas2<V>(
     private val graph: GraphView<V>,
 ) {
-    private var vertices = graph.vertices.values.toList()
-    private var edges = graph.edges.values.toList()
+    var vertices = graph.vertices.values.toList()
+    var edges = graph.edges.values.toList()
 
     private var attraction = Force.Factory.DistanceAttraction()
     private var repulsion = Force.Factory.DistanceRepulsion()
     private var gravity = Force.Factory.DefaultGravity()
 
-    private val rootRegion: BurnsHutRegion<V> = BurnsHutRegion(vertices)
+    private lateinit var rootRegion: BurnsHutRegion<V>
 
     var repulsionCoefficient
         get() = repulsion.coefficient
@@ -42,15 +45,15 @@ class ForceAtlas2<V>(
             gravity.coefficient = value
         }
 
-    var burnsHutTheta
-        get() = rootRegion.theta
+    var burnsHutTheta = 1.0
         set(value) {
-            rootRegion.theta = value
+            field = value
+            if(this::rootRegion.isInitialized) rootRegion.theta = value
         }
 
-    var speedCoefficient = 1
-    var maxSpeedCoefficient = 1
-    var toleranceCoefficient = 1
+    var speedCoefficient = 1.0
+    var maxSpeedCoefficient = 1.0
+    var toleranceCoefficient = 1.0
     var burnsHut: Boolean = true
 
     private val vCenter = Point2D(
@@ -58,9 +61,10 @@ class ForceAtlas2<V>(
         vertices.fold(0.0) { acc, vView -> acc + vView.centerY / vertices.size }
     )
 
-    fun doIteration() {
+    fun doIteration(): Map<VertexView<V>, Point2D> {
         //Preparation of vertices
         for (vertexView in vertices) vertexView.vertex.layoutData.prepareToIteration()
+        if(burnsHut) rootRegion = BurnsHutRegion(vertices, burnsHutTheta)
         //Repulsion
         if (burnsHut) {
             for (vertexView in vertices) repulsion.applyForce(rootRegion, vertexView)
@@ -70,6 +74,7 @@ class ForceAtlas2<V>(
                 for (j in i + 1 until vertices.size) {
                     val vertexView2 = vertices[j]
                     repulsion.applyForce(vertexView1, vertexView2)
+                    repulsion.applyForce(vertexView2, vertexView1)
                 }
             }
         }
@@ -91,15 +96,21 @@ class ForceAtlas2<V>(
         }
         val globalSpeed =
             toleranceCoefficient * traction / swing //TODO: проверить, будет ли эффект, если ограничить как у авторов
-        //Displacement of vertices
+        //Displacement of vertices computation
         for (vertexView in vertices) {
             val speed = minOf(
                 speedCoefficient * globalSpeed / (1 + globalSpeed * swing.pow(0.5)),
                 maxSpeedCoefficient / vertexView.vertex.layoutData.appliedForce.magnitude()
             )
 
-            vertexView.centerX += vertexView.vertex.layoutData.appliedForce.x * speed
-            vertexView.centerY += vertexView.vertex.layoutData.appliedForce.y * speed
+            vertexView.vertex.layoutData.speed = speed
+        }
+
+        return vertices.associateWith {
+            Point2D(
+                it.vertex.layoutData.appliedForce.x * it.vertex.layoutData.speed,
+                it.vertex.layoutData.appliedForce.y * it.vertex.layoutData.speed
+            )
         }
     }
 }

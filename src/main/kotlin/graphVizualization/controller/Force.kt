@@ -38,15 +38,6 @@ abstract class Force {
                 for (subRegion in region.subRegions) applyForce(subRegion, vertexTo)
             }
         }
-
-        val forceVector = forceFunction(
-            region.massCenter,
-            Point2D(vertexTo.centerX, vertexTo.centerY),
-            region.mass,
-            vertexTo.vertex.degree.toDouble(),
-        )
-
-        vertexTo.vertex.layoutData.applyForce(forceVector)
     }
 
     fun <V> applyForce(pointFrom: Point2D, vertexTo: VertexView<V>) {

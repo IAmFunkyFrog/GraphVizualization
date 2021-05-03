@@ -3,21 +3,23 @@ package graphVizualization.controller
 import graphVizualization.view.VertexView
 import javafx.geometry.Point2D
 import kotlin.math.nextDown
+import kotlin.math.nextUp
 
 class BurnsHutRegion<V>(
-    val vertices: List<VertexView<V>>
+    val vertices: List<VertexView<V>>,
+    theta: Double
 ) {
     val subRegions: ArrayList<BurnsHutRegion<V>> = ArrayList()
 
-    var theta: Double = 1.0
+    var theta: Double = theta
         set(value) {
             field = value
             for (region in subRegions) region.theta = theta
         }
-
-    val mass = vertices.fold(0.0) { acc, vView ->
+    //TODO проверить корректность алгоритма при установке массы >= 1
+    val mass = 1 + vertices.fold(0.0) { acc, vView ->
         acc + vView.vertex.degree
-    }.nextDown()
+    }
     val massCenter = Point2D(
         vertices.fold(0.0) { acc, vView ->
             acc + vView.centerX * vView.vertex.degree
@@ -58,11 +60,11 @@ class BurnsHutRegion<V>(
 
     private fun makeSubRegion(subVertices: List<VertexView<V>>) {
         if (subVertices.isNotEmpty()) {
-            if (subVertices.size < vertices.size) subRegions.add(BurnsHutRegion<V>(subVertices))
+            if (subVertices.size < vertices.size) subRegions.add(BurnsHutRegion<V>(subVertices, theta))
             else {
                 for (vertex in subVertices) {
                     val oneVertexList = listOf(vertex)
-                    subRegions.add(BurnsHutRegion<V>(oneVertexList))
+                    subRegions.add(BurnsHutRegion<V>(oneVertexList, theta))
                 }
             }
         }
