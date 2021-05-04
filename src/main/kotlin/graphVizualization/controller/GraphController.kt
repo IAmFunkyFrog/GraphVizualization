@@ -1,5 +1,6 @@
 package graphVizualization.controller
 
+import Vertex
 import graphVizualization.model.Graph
 import graphVizualization.view.GraphView
 import graphVizualization.view.VertexView
@@ -7,9 +8,11 @@ import javafx.concurrent.ScheduledService
 import javafx.concurrent.Task
 import javafx.event.EventHandler
 import javafx.geometry.Point2D
+import javafx.scene.Node
 import javafx.scene.input.*
 import javafx.util.Duration
 import tornadofx.Controller
+import tornadofx.add
 
 class ForceAtlas2Service(
     var forceAtlas2: ForceAtlas2
@@ -39,15 +42,11 @@ class ForceAtlas2Service(
 }
 
 class GraphController(
-    private val graph: GraphView = GraphView(Graph.EmptyGraph())
+    private val graphView: GraphView = GraphView(Graph.EmptyGraph())
 ): Controller() {
 
-    var forceAtlas2 = ForceAtlas2(graph)
+    var forceAtlas2 = ForceAtlas2(graphView)
     var forceAtlas2Service: ForceAtlas2Service = ForceAtlas2Service(forceAtlas2)
-
-    fun resetForceAtlas2() {
-        forceAtlas2 = ForceAtlas2(graph)
-    }
 
     fun cancelForceAtlas2() {
         forceAtlas2Service.cancel()
@@ -56,6 +55,16 @@ class GraphController(
     fun startForceAtlas2() {
         forceAtlas2Service = ForceAtlas2Service(forceAtlas2)
         forceAtlas2Service.start()
+    }
+
+    fun createVertex(vertexValue: String) {
+        val newVertex = Vertex(vertexValue)
+        graphView.graph.addVertex(newVertex)
+        graphView.vertices[newVertex] = VertexView(newVertex).also {
+            graphView.add(it as Node)
+            graphView.add(it.label as Node)
+        }
+        forceAtlas2 = ForceAtlas2(graphView)
     }
 
     private var oldMousePos = Point2D(0.0, 0.0)

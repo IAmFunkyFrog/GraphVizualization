@@ -7,17 +7,17 @@ import tornadofx.add
 import java.lang.IllegalArgumentException
 
 class GraphView(
-    private val graph: Graph
+    val graph: Graph
 ) : Pane() {
     //TODO проверить с lazy
-    val vertices = graph.vertices().associateWith {
+    var vertices = graph.vertices().associateWith {
             VertexView(it)
-        }
-    val edges = graph.edges().associateWith {
+        } as MutableMap
+    var edges = graph.edges().associateWith {
             val vertexView1 = vertices[it.vertex1] ?: throw IllegalArgumentException()
             val vertexView2 = vertices[it.vertex2] ?: throw IllegalArgumentException()
             EdgeView(it, vertexView1, vertexView2)
-        }
+        } as MutableMap
     val controller: GraphController = GraphController(this)
 
     init {

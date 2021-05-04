@@ -2,52 +2,47 @@ package graphVizualization.view
 
 import graphVizualization.model.Graph
 import javafx.scene.Parent
+import javafx.scene.control.Label
 import javafx.scene.control.TextField
-import javafx.scene.layout.Pane
 import tornadofx.*
 
 class MainView() : View() {
-    private val graph = GraphView(Graph.RandomGraph())
+    private val graphView = GraphView(Graph.EmptyGraph())
 
     private val forceAtlas2Inputs = listOf(
-        Pair("repulsionCoefficient", createNumberField(graph.controller.forceAtlas2.repulsionCoefficient) {
-            graph.controller.forceAtlas2.repulsionCoefficient = it
+        Pair("repulsionCoefficient", createNumberField(graphView.controller.forceAtlas2.repulsionCoefficient) {
+            graphView.controller.forceAtlas2.repulsionCoefficient = it
         }),
-        Pair("gravityCoefficient", createNumberField(graph.controller.forceAtlas2.gravityCoefficient) {
-            graph.controller.forceAtlas2.gravityCoefficient = it
+        Pair("gravityCoefficient", createNumberField(graphView.controller.forceAtlas2.gravityCoefficient) {
+            graphView.controller.forceAtlas2.gravityCoefficient = it
         }),
-        Pair("burnsHutTheta", createNumberField(graph.controller.forceAtlas2.burnsHutTheta) {
-            graph.controller.forceAtlas2.burnsHutTheta = it
+        Pair("burnsHutTheta", createNumberField(graphView.controller.forceAtlas2.burnsHutTheta) {
+            graphView.controller.forceAtlas2.burnsHutTheta = it
         }),
-        Pair("speedCoefficient", createNumberField(graph.controller.forceAtlas2.speedCoefficient) {
-            graph.controller.forceAtlas2.speedCoefficient = it
+        Pair("speedCoefficient", createNumberField(graphView.controller.forceAtlas2.speedCoefficient) {
+            graphView.controller.forceAtlas2.speedCoefficient = it
         }),
-        Pair("maxSpeedCoefficient", createNumberField(graph.controller.forceAtlas2.maxSpeedCoefficient) {
-            graph.controller.forceAtlas2.maxSpeedCoefficient = it
+        Pair("maxSpeedCoefficient", createNumberField(graphView.controller.forceAtlas2.maxSpeedCoefficient) {
+            graphView.controller.forceAtlas2.maxSpeedCoefficient = it
         }),
-        Pair("toleranceCoefficient", createNumberField(graph.controller.forceAtlas2.toleranceCoefficient) {
-            graph.controller.forceAtlas2.toleranceCoefficient = it
+        Pair("toleranceCoefficient", createNumberField(graphView.controller.forceAtlas2.toleranceCoefficient) {
+            graphView.controller.forceAtlas2.toleranceCoefficient = it
         })
     )
 
     override val root: Parent = borderpane {
         center {
-            add(graph)
+            add(graphView)
         }
         left = vbox {
-            button("Reset ForceAtlas2") {
-                action {
-                    graph.controller.resetForceAtlas2()
-                }
-            }
             button("Start") {
                 action {
-                    graph.controller.startForceAtlas2()
+                    graphView.controller.startForceAtlas2()
                 }
             }
             button("Cancel") {
                 action {
-                    graph.controller.cancelForceAtlas2()
+                    graphView.controller.cancelForceAtlas2()
                 }
             }
             for((desc, input) in forceAtlas2Inputs) {
@@ -55,6 +50,20 @@ class MainView() : View() {
                     labelFor = input
                 })
                 add(input)
+            }
+            form {
+                Label("Create vertex").also {
+                    add(it)
+                    it.labelFor = this
+                }
+                TextField().also {
+                    add(it)
+                    button("Create") {
+                        action {
+                            graphView.controller.createVertex(it.text)
+                        }
+                    }
+                }
             }
         }
     }

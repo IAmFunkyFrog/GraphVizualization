@@ -19,10 +19,9 @@ class VertexView(
     var visibleText: BooleanProperty = booleanProperty(false)
 
     init {
-        radius = 10.0
+        radius = 15.0
         centerX = Random.nextUInt().toDouble() % 640
         centerY = Random.nextUInt().toDouble() % 640
-
         fill = Color.RED
 
         this.setOnMouseDragged {
@@ -36,17 +35,17 @@ class VertexView(
         }
     }
 
+    constructor(vertex: Vertex, point: Point2D): this(vertex) {
+        centerX = point.x
+        centerY = point.y
+    }
+
     val label = text {
         text = vertex.value
         fill = Color.BLUE
         xProperty().bind(centerXProperty() + radius)
-        yProperty().bind(centerYProperty())
+        yProperty().bind(centerYProperty() - radius)
         visibleWhen(visibleText)
-    }
-
-    constructor(vertex: Vertex, point: Point2D): this(vertex) {
-        centerX = point.x
-        centerY = point.y
     }
 
     fun applyDisplacement(displacement: Point2D) {
