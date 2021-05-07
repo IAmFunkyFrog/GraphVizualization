@@ -3,37 +3,50 @@ package graphVizualization.view
 import graphVizualization.model.Graph
 import javafx.scene.Parent
 import javafx.scene.control.Label
+import javafx.scene.control.Menu
+import javafx.scene.control.MenuItem
 import javafx.scene.control.TextField
 import tornadofx.*
 
 class MainView() : View() {
-    private val graphView = GraphView(Graph.EmptyGraph())
+    private val graphView = GraphView()
 
     private val forceAtlas2Inputs = listOf(
-        Pair("repulsionCoefficient", createNumberField(graphView.controller.forceAtlas2.repulsionCoefficient) {
+        Pair("repulsionCoefficient", NumberField(graphView.controller.forceAtlas2.repulsionCoefficient) {
             graphView.controller.forceAtlas2.repulsionCoefficient = it
         }),
-        Pair("gravityCoefficient", createNumberField(graphView.controller.forceAtlas2.gravityCoefficient) {
+        Pair("gravityCoefficient", NumberField(graphView.controller.forceAtlas2.gravityCoefficient) {
             graphView.controller.forceAtlas2.gravityCoefficient = it
         }),
-        Pair("burnsHutTheta", createNumberField(graphView.controller.forceAtlas2.burnsHutTheta) {
+        Pair("burnsHutTheta", NumberField(graphView.controller.forceAtlas2.burnsHutTheta) {
             graphView.controller.forceAtlas2.burnsHutTheta = it
         }),
-        Pair("speedCoefficient", createNumberField(graphView.controller.forceAtlas2.speedCoefficient) {
+        Pair("speedCoefficient", NumberField(graphView.controller.forceAtlas2.speedCoefficient) {
             graphView.controller.forceAtlas2.speedCoefficient = it
         }),
-        Pair("maxSpeedCoefficient", createNumberField(graphView.controller.forceAtlas2.maxSpeedCoefficient) {
+        Pair("maxSpeedCoefficient", NumberField(graphView.controller.forceAtlas2.maxSpeedCoefficient) {
             graphView.controller.forceAtlas2.maxSpeedCoefficient = it
         }),
-        Pair("toleranceCoefficient", createNumberField(graphView.controller.forceAtlas2.toleranceCoefficient) {
+        Pair("toleranceCoefficient", NumberField(graphView.controller.forceAtlas2.toleranceCoefficient) {
             graphView.controller.forceAtlas2.toleranceCoefficient = it
         })
     )
 
     override val root: Parent = borderpane {
-        center {
-            add(graphView)
+        top = hbox {
+            menubar {
+                Menu("Save").also {
+                    this.menus.add(it)
+
+                    it.items.add(MenuItem("in Neo4j").apply {
+                        setOnAction {
+                            openInternalWindow<Neo4jSaveView>()
+                        }
+                    })
+                }
+            }
         }
+        center = graphView.root
         left = vbox {
             button("Start") {
                 action {
@@ -46,9 +59,9 @@ class MainView() : View() {
                 }
             }
             for((desc, input) in forceAtlas2Inputs) {
-                add(label(desc) {
+                label(desc) {
                     labelFor = input
-                })
+                }
                 add(input)
             }
             form {
@@ -66,22 +79,5 @@ class MainView() : View() {
                 }
             }
         }
-    }
-
-    private fun createNumberField(
-        initValue: Double,
-        onChange: (Double) -> Unit
-    ): TextField {
-        val newField = TextField(initValue.toString())
-        newField.textProperty().addListener { _, _, newValue ->
-            try {
-                onChange(newValue.toDouble())
-            }
-            catch (e: Exception) {
-                //TODO добавить нормальное оповещение
-                println("parse error in forceAtlas2Params")
-            }
-        }
-        return newField
     }
 }
