@@ -10,7 +10,7 @@ abstract class Force {
 
     abstract val forceFunction: ForceFunction
 
-    fun  applyForce(vertexFrom: VertexView, vertexTo: VertexView) {
+    fun applyForce(vertexFrom: VertexView, vertexTo: VertexView) {
         val forceVector = forceFunction(
             Point2D(vertexFrom.centerX, vertexFrom.centerY),
             Point2D(vertexTo.centerX, vertexTo.centerY),
@@ -21,7 +21,7 @@ abstract class Force {
         vertexTo.vertex.layoutData.applyForce(forceVector)
     }
 
-    fun  applyForce(region: BurnsHutRegion, vertexTo: VertexView) {
+    fun applyForce(region: BurnsHutRegion, vertexTo: VertexView) {
         if (region.vertices.size == 1) {
             applyForce(region.vertices[0], vertexTo)
         } else {
@@ -40,7 +40,7 @@ abstract class Force {
         }
     }
 
-    fun  applyForce(pointFrom: Point2D, vertexTo: VertexView) {
+    fun applyForce(pointFrom: Point2D, vertexTo: VertexView) {
         val forceVector = forceFunction(
             pointFrom,
             Point2D(vertexTo.centerX, vertexTo.centerY),
