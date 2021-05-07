@@ -7,7 +7,6 @@ import tornadofx.runLater
 import kotlin.math.pow
 
 //TODO: реализовать режим предотвращения коллизий
-//TODO: Реализовать оптимизацию Burns-Hut
 //TODO: Реализовать режим LinLog
 //TODO: Реализовать поддержку учета взвешенных ребер
 //TODO: Реализовать поддержку DissuadeHubs
