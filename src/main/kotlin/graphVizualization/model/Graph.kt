@@ -9,14 +9,19 @@ class Graph(
     private val edges: MutableCollection<Edge>,
 ) {
 
-    fun addVertex(vertex: Vertex) {
-        vertices.add(vertex)
+    fun addVertex(vertex: Vertex): Vertex? {
+        return if(vertices.any { v -> v == vertex }) null
+        else vertex.also {
+            vertices.add(vertex)
+        }
     }
 
-    fun addEdge(edge: Edge) {
-        if(edges.any { e -> e.vertex1 == edge.vertex1 && e.vertex2 == edge.vertex2 }) return
-        if(edges.any { e -> e.vertex1 == edge.vertex2 && e.vertex2 == edge.vertex1 }) return
-        edges.add(edge)
+    fun addEdge(edge: Edge): Edge? {
+        return if(edges.any { e -> e.vertex1 == edge.vertex1 && e.vertex2 == edge.vertex2 } ||
+            edges.any { e -> e.vertex1 == edge.vertex2 && e.vertex2 == edge.vertex1 }) null
+        else edge.also {
+            edges.add(edge)
+        }
     }
 
     fun vertices() = vertices.toList()
@@ -59,7 +64,7 @@ class Graph(
 
             for(i in 1..100) graph.vertices.add(Vertex(i.toString()))
 
-            val edgesCount = 10000
+            val edgesCount = 100
             val vertices = graph.vertices()
             for(i in 1..edgesCount) {
                 val v1 = Random.nextInt().absoluteValue % vertices.size
