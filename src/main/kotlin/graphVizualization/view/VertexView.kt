@@ -1,8 +1,12 @@
 package graphVizualization.view
 
 import Vertex
+import graphVizualization.controller.GraphController
 import graphVizualization.controller.VertexController
 import javafx.beans.property.BooleanProperty
+import javafx.beans.property.BooleanProperty.booleanProperty
+import javafx.beans.property.BooleanPropertyBase
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
@@ -14,25 +18,15 @@ class VertexView(
     val vertex: Vertex
 ): Circle() {
 
-    private val controller = VertexController()
+    val controller = VertexController()
 
-    var visibleText: BooleanProperty = booleanProperty(false)
+    var visibleText: BooleanProperty = SimpleBooleanProperty(false)
 
     init {
         radius = 15.0
-        centerX = Random.nextUInt().toDouble() % 640
-        centerY = Random.nextUInt().toDouble() % 640
+        centerX = Random.nextUInt().toDouble() % 300
+        centerY = Random.nextUInt().toDouble() % 300
         fill = Color.RED
-
-        this.setOnMouseDragged {
-            controller.onDrag(it, this)
-        }
-        this.setOnMouseEntered {
-            controller.onMouseEntered(this)
-        }
-        this.setOnMouseExited {
-            controller.onMouseExited(this)
-        }
     }
 
     constructor(vertex: Vertex, point: Point2D): this(vertex) {
@@ -43,8 +37,8 @@ class VertexView(
     val label = text {
         text = vertex.value
         fill = Color.BLUE
-        xProperty().bind(centerXProperty() + radius)
-        yProperty().bind(centerYProperty() - radius)
+        xProperty().bind(centerXProperty() + radiusProperty())
+        yProperty().bind(centerYProperty() - radiusProperty())
         visibleWhen(visibleText)
     }
 
