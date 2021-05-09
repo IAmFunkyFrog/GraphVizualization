@@ -1,9 +1,7 @@
-package graphVizualization.controller
+package graphVizualization.model
 
 import graphVizualization.view.VertexView
 import javafx.geometry.Point2D
-import kotlin.math.nextDown
-import kotlin.math.nextUp
 
 class BurnsHutRegion(
     val vertices: List<VertexView>,

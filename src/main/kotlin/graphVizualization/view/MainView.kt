@@ -1,6 +1,5 @@
 package graphVizualization.view
 
-import graphVizualization.model.Graph
 import javafx.scene.Parent
 import javafx.scene.control.Label
 import javafx.scene.control.Menu
@@ -40,7 +39,16 @@ class MainView() : View() {
 
                     it.items.add(MenuItem("in Neo4j").apply {
                         setOnAction {
-                            openInternalWindow<Neo4jSaveView>()
+                            openInternalWindow(Neo4jSaveFragment(graphView.graph, graphView.name))
+                        }
+                    })
+                }
+                Menu("Load").also {
+                    this.menus.add(it)
+
+                    it.items.add(MenuItem("from Neo4j").apply {
+                        setOnAction {
+                            openInternalWindow(Neo4jLoadFragment(graphView))
                         }
                     })
                 }

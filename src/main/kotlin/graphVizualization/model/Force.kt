@@ -1,4 +1,4 @@
-package graphVizualization.controller
+package graphVizualization.model
 
 import graphVizualization.view.VertexView
 import javafx.geometry.Point2D

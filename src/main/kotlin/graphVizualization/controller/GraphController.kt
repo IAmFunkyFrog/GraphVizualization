@@ -2,6 +2,7 @@ package graphVizualization.controller
 
 import Vertex
 import graphVizualization.model.Edge
+import graphVizualization.model.ForceAtlas2
 import graphVizualization.view.EdgeView
 import graphVizualization.view.GraphView
 import graphVizualization.view.VertexView
@@ -53,6 +54,7 @@ class GraphController(
     }
 
     fun startForceAtlas2() {
+        forceAtlas2 = ForceAtlas2(graphView)
         forceAtlas2Service = ForceAtlas2Service(forceAtlas2)
         forceAtlas2Service.start()
     }
@@ -103,7 +105,6 @@ class GraphController(
                 graphView.root.add(it.label)
                 graphView.setHandlersOnVertex(it)
             }
-            forceAtlas2 = ForceAtlas2(graphView)
         }
     }
 
@@ -118,7 +119,6 @@ class GraphController(
                 //TODO разобраться с костылем
                 for((_, vView) in graphView.vertices) vView.toFront()
             }
-            forceAtlas2 = ForceAtlas2(graphView)
         }
     }
 }

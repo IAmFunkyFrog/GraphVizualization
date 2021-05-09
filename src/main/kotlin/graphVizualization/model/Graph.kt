@@ -38,7 +38,7 @@ class Graph(
 
             val vertices = graph.vertices()
             val part = vertices.size / 6
-            val edgesCount = 15000
+            val edgesCount = 5000
             for(i in 1..edgesCount) {
                 val v1 = if(i < 100) 0 else Random.nextInt().absoluteValue % part
                 val v2 = Random.nextInt().absoluteValue % part

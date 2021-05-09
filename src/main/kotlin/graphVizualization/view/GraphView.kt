@@ -1,26 +1,30 @@
 package graphVizualization.view
 
+import Vertex
 import graphVizualization.controller.GraphController
+import graphVizualization.model.Edge
 import graphVizualization.model.Graph
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.scene.Parent
-import tornadofx.*
+import tornadofx.View
+import tornadofx.pane
 import java.lang.IllegalArgumentException
 
 class GraphView(
     var name: StringProperty = SimpleStringProperty("Undefined")
 ) : View() {
 
-    val graph: Graph = Graph.RandomGraph()
+    var graph: Graph = Graph.RandomGraph()
     var vertices = graph.vertices().associateWith {
-            VertexView(it)
-        } as MutableMap
+        VertexView(it)
+    } as MutableMap
     var edges = graph.edges().associateWith {
-            val vertexView1 = vertices[it.vertex1] ?: throw IllegalArgumentException()
-            val vertexView2 = vertices[it.vertex2] ?: throw IllegalArgumentException()
-            EdgeView(it, vertexView1, vertexView2)
-        } as MutableMap
+        val vertexView1 = vertices[it.vertex1] ?: throw IllegalArgumentException()
+        val vertexView2 = vertices[it.vertex2] ?: throw IllegalArgumentException()
+        EdgeView(it, vertexView1, vertexView2)
+    } as MutableMap
+
     val controller: GraphController = GraphController(this)
 
     override val root: Parent = pane {
@@ -66,5 +70,9 @@ class GraphView(
         edgeView.setOnMousePressed {
             if(it.isAltDown) openInternalWindow(edgeView.weightEditor)
         }
+    }
+
+    fun resetGraph(graph: Graph, name: String) {
+
     }
 }

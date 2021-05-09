@@ -1,4 +1,4 @@
-package graphVizualization.controller
+package graphVizualization.model
 
 import graphVizualization.view.GraphView
 import graphVizualization.view.VertexView
