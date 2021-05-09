@@ -1,8 +1,8 @@
 package graphVizualization.controller
 
+import Vertex
+import graphVizualization.model.Edge
 import graphVizualization.model.Graph
-import javafx.collections.FXCollections
-import javafx.collections.ObservableList
 import org.neo4j.driver.AuthTokens
 import org.neo4j.driver.GraphDatabase
 import tornadofx.Controller
@@ -14,14 +14,21 @@ class Neo4jSaveLoadController : Controller() {
         it.addGraph(graph, name)
     }
 
-    fun getAllGraphs() = DBConnection().use {
-        it.getAllGraphs()
+    fun getAllGraphNames() = DBConnection().use {
+        it.getAllGraphNames()
     }
 
-    fun getGraphByName(name: String) = DBConnection().use {
-        //TODO сделать метод
+    fun getGraphByName(name: String): Graph = DBConnection().use {
+        val vertices = it.getVertexValuesByGraphName(name).map { value -> value to Vertex(value) }.toMap()
+        val edges = it.getEdgeValuesByGraphName(name).map { (value1, value2, weight) ->
+            val vertex1 = vertices[value1] ?: throw IllegalArgumentException()
+            val vertex2 = vertices[value2] ?: throw IllegalArgumentException()
+            Edge(vertex1, vertex2, weight)
+        }.filter { e -> e.vertex1.value < e.vertex2.value }
+        return Graph(vertices.values as MutableCollection, edges as MutableList)
     }
 
+    //TODO подумать над тем, тобы переместить этот класс в директорию model
     private inner class DBConnection : Closeable {
 
         private val uri = "bolt://localhost:7687"
@@ -64,24 +71,57 @@ class Neo4jSaveLoadController : Controller() {
             }
         }
 
-        fun getAllGraphs() = mutableListOf<String>().apply {
+        fun getAllGraphNames() = mutableListOf<String>().apply {
             session.writeTransaction {
                 try {
-                    val graphs = it.run("MATCH (g:Graph) RETURN g.name AS name")
-                    for(graph in graphs) {
-                        println(graph)
-                        this.add(graph.get("name").asString())
-                    }
-                }
-                catch(e: Exception) {
+                    val graphNames = it.run("MATCH (g:Graph) RETURN g.name AS name")
+                    for (graph in graphNames) this.add(graph.get("name").asString())
+                } catch (e: Exception) {
                     //TODO подумать над включением логера в проект
                     println(e.message)
                 }
             }
         }
 
-        fun getVerticesByGraphName() {
+        fun getVertexValuesByGraphName(name: String) = mutableListOf<String>().apply {
+            session.writeTransaction { tx ->
+                try {
+                    val vertexValues = tx.run(
+                        "MATCH (g:Graph {name: \$name}), (v:Vertex)-[:IN]-(g) RETURN v.value AS value",
+                        mutableMapOf(
+                            "name" to name
+                        ) as Map<String, Any>?
+                    )
+                    for(vertex in vertexValues) vertex.get("value").asString().also {
+                        this.add(it)
+                    }
+                } catch (e: Exception) {
+                    //TODO подумать над включением логера в проект
+                    println(e.message)
+                }
+            }
+        }
 
+        fun getEdgeValuesByGraphName(name: String) = mutableListOf<Triple<String, String, Double>>().apply {
+            session.writeTransaction { tx ->
+                try {
+                    val edgeValues = tx.run(
+                        "MATCH (g:Graph {name: \$name}), (v1:Vertex)-[:IN]-(g), (v1)-[rel:CONNECTED]-(v2:Vertex) RETURN rel.weight AS weight, v1.value AS value1, v2.value AS value2",
+                        mutableMapOf(
+                            "name" to name
+                        ) as Map<String, Any>?
+                    )
+                    for(edge in edgeValues) {
+                        val weight = edge.get("weight").asDouble()
+                        val vertex1 = edge.get("value1").asString()
+                        val vertex2 = edge.get("value2").asString()
+                        this.add(Triple(vertex1, vertex2, weight))
+                    }
+                } catch (e: Exception) {
+                    //TODO подумать над включением логера в проект
+                    println(e.message)
+                }
+            }
         }
 
         override fun close() {
