@@ -15,8 +15,8 @@ class BurnsHutRegion(
             for (region in subRegions) region.theta = theta
         }
     //TODO проверить корректность алгоритма при установке массы >= 1
-    val mass = 1 + vertices.fold(0.0) { acc, vView ->
-        acc + vView.vertex.degree
+    val mass = vertices.fold(0.0) { acc, vView ->
+        acc + vView.vertex.degree + 1
     }
     val massCenter = Point2D(
         vertices.fold(0.0) { acc, vView ->

@@ -31,16 +31,16 @@ class Graph(
 
         fun EmptyGraph() = Graph(ArrayList(), ArrayList())
 
-        fun ControlGraph(): Graph {
+        fun ControlGraph(n: Int): Graph {
             val graph = Graph(ArrayList(), ArrayList())
 
-            for(i in 1..10000) graph.vertices.add(Vertex(i.toString()))
+            for(i in 1..n) graph.vertices.add(Vertex(i.toString()))
 
             val vertices = graph.vertices()
             val part = vertices.size / 6
-            val edgesCount = 5000
+            val edgesCount = n * 2
             for(i in 1..edgesCount) {
-                val v1 = if(i < 100) 0 else Random.nextInt().absoluteValue % part
+                val v1 = Random.nextInt().absoluteValue % part
                 val v2 = Random.nextInt().absoluteValue % part
                 graph.addEdge(Edge(vertices[v1], vertices[v2], Random.nextDouble()))
                 graph.addEdge(Edge(vertices[v1 + part], vertices[v2 + part], Random.nextDouble()))

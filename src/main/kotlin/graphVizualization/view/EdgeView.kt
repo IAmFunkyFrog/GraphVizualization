@@ -22,16 +22,19 @@ class EdgeView(
 
     val weightEditor = WeightEditor()
 
-    inner class WeightEditor(): Fragment() {
-        override val root: Parent = pane {
-            vbox {
-                NumberField(edge.weight) {
-                    edge.weight = it
-                }.also {
-                    label("Weight") {
-                        labelFor = it
-                    }
-                    add(it)
+    inner class WeightEditor() : Fragment() {
+        override val root: Parent = vbox {
+            NumberField(edge.weight) {
+                edge.weight = it
+            }.also {
+                label("Weight") {
+                    labelFor = it
+                }
+                add(it)
+            }
+            button("Delete") {
+                action {
+
                 }
             }
         }

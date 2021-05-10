@@ -4,7 +4,6 @@ import graphVizualization.controller.GraphController
 import graphVizualization.model.Graph
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
-import javafx.scene.Parent
 import javafx.scene.layout.Pane
 import tornadofx.View
 import tornadofx.pane
@@ -14,7 +13,7 @@ class GraphView(
     var name: StringProperty = SimpleStringProperty("Undefined")
 ) : View() {
 
-    var graph: Graph = Graph.RandomGraph()
+    var graph: Graph = Graph.ControlGraph(200)
     var vertices = graph.vertices().associateWith {
         VertexView(it)
     } as MutableMap
@@ -26,7 +25,7 @@ class GraphView(
 
     val controller: GraphController = GraphController(this)
 
-    override val root: Parent = pane {
+    override val root: Pane = pane {
         edges.values.forEach { e ->
             add(e)
             setHandlersOnEdge(e)
@@ -35,18 +34,6 @@ class GraphView(
             add(v)
             add(v.label)
             setHandlersOnVertex(v)
-        }
-    }
-
-    init {
-        root.setOnScroll {
-            controller.onScroll(it, this)
-        }
-        root.setOnMousePressed {
-            controller.onMousePressed(it, this)
-        }
-        root.setOnMouseDragged {
-            controller.onMouseDragged(it, this)
         }
     }
 
@@ -83,7 +70,7 @@ class GraphView(
             EdgeView(it, vertexView1, vertexView2)
         } as MutableMap
         //TODO подумать как пофиксить кастыль
-        (root as Pane).children.clear()
+        root.children.clear()
         edges.values.forEach { e ->
             root.add(e)
             setHandlersOnEdge(e)

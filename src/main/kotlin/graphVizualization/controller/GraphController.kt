@@ -15,47 +15,22 @@ import javafx.util.Duration
 import tornadofx.Controller
 import tornadofx.add
 
-class ForceAtlas2Service(
-    var forceAtlas2: ForceAtlas2
-): ScheduledService<Unit>() {
-    private lateinit var lastDisplacement: Map<VertexView, Point2D>
-
-    init {
-        period = Duration(10.0)
-        onSucceeded = EventHandler {
-            if(this::lastDisplacement.isInitialized) {
-                for((vView, displacement) in lastDisplacement) {
-                    vView.centerX += displacement.x
-                    vView.centerY += displacement.y
-                }
-            }
-        }
-    }
-
-    override fun createTask(): Task<Unit> = IterationTask()
-
-    private inner class IterationTask : Task<Unit>() {
-        override fun call() {
-            lastDisplacement = forceAtlas2.doIteration()
-        }
-    }
-
-}
-
 class GraphController(
     private val graphView: GraphView
 ): Controller() {
 
     var forceAtlas2 = ForceAtlas2(graphView)
-    var forceAtlas2Service: ForceAtlas2Service = ForceAtlas2Service(forceAtlas2)
+
+    private var forceAtlas2Service = ForceAtlas2Service()
 
     fun cancelForceAtlas2() {
         forceAtlas2Service.cancel()
     }
 
     fun startForceAtlas2() {
+        cancelForceAtlas2()
         forceAtlas2 = ForceAtlas2(graphView)
-        forceAtlas2Service = ForceAtlas2Service(forceAtlas2)
+        forceAtlas2Service = ForceAtlas2Service()
         forceAtlas2Service.start()
     }
 
@@ -72,13 +47,13 @@ class GraphController(
     fun onMousePressed(e: MouseEvent, graphView: GraphView) {
         if (!e.isControlDown) return
 
-        oldMousePos = graphView.root.localToParent(e.x, e.y)
+        oldMousePos = Point2D(e.x, e.y)
     }
 
     fun onMouseDragged(e: MouseEvent, graphView: GraphView) {
         if (!e.isControlDown) return
 
-        val mousePos = graphView.root.localToParent(e.x, e.y)
+        val mousePos = Point2D(e.x, e.y)
         graphView.root.translateX += mousePos.x - oldMousePos.x
         graphView.root.translateY += mousePos.y - oldMousePos.y
 
@@ -120,5 +95,30 @@ class GraphController(
                 for((_, vView) in graphView.vertices) vView.toFront()
             }
         }
+    }
+
+    private inner class ForceAtlas2Service: ScheduledService<Unit>() {
+        private lateinit var lastDisplacement: Map<VertexView, Point2D>
+
+        init {
+            period = Duration(10.0)
+            onSucceeded = EventHandler {
+                if(this::lastDisplacement.isInitialized) {
+                    for((vView, displacement) in lastDisplacement) {
+                        vView.centerX += displacement.x
+                        vView.centerY += displacement.y
+                    }
+                }
+            }
+        }
+
+        override fun createTask(): Task<Unit> = IterationTask()
+
+        private inner class IterationTask : Task<Unit>() {
+            override fun call() {
+                lastDisplacement = forceAtlas2.doIteration()
+            }
+        }
+
     }
 }

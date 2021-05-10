@@ -3,13 +3,9 @@ package graphVizualization.model
 import graphVizualization.view.GraphView
 import graphVizualization.view.VertexView
 import javafx.geometry.Point2D
-import tornadofx.runLater
 import kotlin.math.pow
 
 //TODO: реализовать режим предотвращения коллизий
-//TODO: Реализовать режим LinLog
-//TODO: Реализовать поддержку учета взвешенных ребер
-//TODO: Реализовать поддержку DissuadeHubs
 
 val VertexView.traction
     get() = vertex.layoutData.appliedForce.add(vertex.layoutData.oldAppliedForce).multiply(0.5).magnitude()
@@ -24,7 +20,7 @@ class ForceAtlas2(
     var vertices = graph.vertices.values.toList()
     var edges = graph.edges.values.toList()
 
-    private var attraction = Force.Factory.DistanceAttraction()
+    private var attraction = Force.Factory.LinLogAttraction()
     private var repulsion = Force.Factory.DistanceRepulsion()
     private var gravity = Force.Factory.DefaultGravity()
 
@@ -45,13 +41,16 @@ class ForceAtlas2(
     var burnsHutTheta = 1.0
         set(value) {
             field = value
-            if(this::rootRegion.isInitialized) rootRegion.theta = value
+            if (this::rootRegion.isInitialized) rootRegion.theta = value
         }
 
     var speedCoefficient = 1.0
     var maxSpeedCoefficient = 1.0
     var toleranceCoefficient = 1.0
-    var burnsHut: Boolean = true
+    var burnsHut = false
+    var preventOverlapping = true
+    var overlappingCoefficient = 100.0
+    var edgeWeightCoefficient = 0.0
 
     private val vCenter = Point2D(
         vertices.fold(0.0) { acc, vView -> acc + vView.centerX / vertices.size },
@@ -61,24 +60,28 @@ class ForceAtlas2(
     fun doIteration(): Map<VertexView, Point2D> {
         //Preparation of vertices
         for (vertexView in vertices) vertexView.vertex.layoutData.prepareToIteration()
-        if(burnsHut) rootRegion = BurnsHutRegion(vertices, burnsHutTheta)
+        if (burnsHut) rootRegion = BurnsHutRegion(vertices, burnsHutTheta)
         //Repulsion
         if (burnsHut) {
-            for (vertexView in vertices) repulsion.applyForce(rootRegion, vertexView)
+            for (vertexView in vertices) repulsion.applyForce(rootRegion, vertexView, this::repulsionAdditionalCoefficient)
         } else {
             for (i in vertices.indices) {
                 val vertexView1 = vertices[i]
                 for (j in i + 1 until vertices.size) {
                     val vertexView2 = vertices[j]
-                    repulsion.applyForce(vertexView1, vertexView2)
-                    repulsion.applyForce(vertexView2, vertexView1)
+                    repulsion.applyForce(vertexView1, vertexView2, this::repulsionAdditionalCoefficient)
+                    repulsion.applyForce(vertexView2, vertexView1, this::repulsionAdditionalCoefficient)
                 }
             }
         }
         //Attraction
         for (edgeView in edges) {
-            attraction.applyForce(edgeView.vertexView1, edgeView.vertexView2)
-            attraction.applyForce(edgeView.vertexView2, edgeView.vertexView1)
+            attraction.applyForce(edgeView.vertexView1, edgeView.vertexView2) { v1, v2 ->
+                attractionAdditionalCoefficient(v1, v2) * (edgeView.edge.weight).pow(edgeWeightCoefficient)
+            }
+            attraction.applyForce(edgeView.vertexView2, edgeView.vertexView1) { v1, v2 ->
+                attractionAdditionalCoefficient(v1, v2) * (edgeView.edge.weight).pow(edgeWeightCoefficient)
+            }
         }
         //Gravity
         for (vertexView in vertices) {
@@ -109,5 +112,19 @@ class ForceAtlas2(
                 it.vertex.layoutData.appliedForce.y * it.vertex.layoutData.speed
             )
         }
+    }
+
+    private fun checkOverlapping(v1: VertexView, v2: VertexView): Boolean {
+        return Point2D(v1.centerX, v1.centerY).distance(v2.centerX, v2.centerY) < v1.radius + v2.radius
+    }
+
+    private fun repulsionAdditionalCoefficient(v1: VertexView, v2: VertexView): Double {
+        return if(preventOverlapping && checkOverlapping(v1, v2)) overlappingCoefficient
+        else 1.0
+    }
+
+    private fun attractionAdditionalCoefficient(v1: VertexView, v2: VertexView): Double {
+        return if(preventOverlapping && checkOverlapping(v1, v2)) 0.0
+        else 1.0
     }
 }
