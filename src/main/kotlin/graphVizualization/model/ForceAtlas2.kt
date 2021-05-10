@@ -20,9 +20,9 @@ class ForceAtlas2(
     var vertices = graph.vertices.values.toList()
     var edges = graph.edges.values.toList()
 
-    private var attraction = Force.Factory.LinLogAttraction()
-    private var repulsion = Force.Factory.DistanceRepulsion()
-    private var gravity = Force.Factory.DefaultGravity()
+    var attraction: Force = Force.Factory.LinLogAttraction()
+    var repulsion: Force = Force.Factory.DistanceRepulsion()
+    var gravity: Force = Force.Factory.DefaultGravity()
 
     private lateinit var rootRegion: BurnsHutRegion
 
@@ -44,13 +44,21 @@ class ForceAtlas2(
             if (this::rootRegion.isInitialized) rootRegion.theta = value
         }
 
-    var speedCoefficient = 1.0
-    var maxSpeedCoefficient = 1.0
+    var speedCoefficient = 0.1
+    var maxSpeedCoefficient = 10.0
     var toleranceCoefficient = 1.0
     var burnsHut = false
     var preventOverlapping = true
     var overlappingCoefficient = 100.0
     var edgeWeightCoefficient = 0.0
+
+    init {
+        if(vertices.size < 50000) {
+            if(vertices.size < 5000) toleranceCoefficient = 0.1
+            else toleranceCoefficient = 1.0
+        }
+        else toleranceCoefficient = 10.0
+    }
 
     private val vCenter = Point2D(
         vertices.fold(0.0) { acc, vView -> acc + vView.centerX / vertices.size },
@@ -112,6 +120,11 @@ class ForceAtlas2(
                 it.vertex.layoutData.appliedForce.y * it.vertex.layoutData.speed
             )
         }
+    }
+
+    fun reset() {
+        vertices = graph.vertices.values.toList()
+        edges = graph.edges.values.toList()
     }
 
     private fun checkOverlapping(v1: VertexView, v2: VertexView): Boolean {

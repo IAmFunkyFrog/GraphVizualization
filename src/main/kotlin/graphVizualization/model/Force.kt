@@ -109,15 +109,5 @@ abstract class Force {
                 ).normalize().multiply(forceValue)
             }
         }
-
-        class NoGravity: Force() {
-            override val forceFunction: ForceFunction = { pointFrom, pointTo, _, massTo ->
-                val forceValue = 0.0
-                Point2D(
-                    pointFrom.x - pointTo.x,
-                    pointFrom.y - pointTo.y
-                ).normalize().multiply(forceValue)
-            }
-        }
     }
 }

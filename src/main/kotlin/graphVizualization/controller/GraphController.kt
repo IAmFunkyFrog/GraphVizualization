@@ -2,6 +2,7 @@ package graphVizualization.controller
 
 import Vertex
 import graphVizualization.model.Edge
+import graphVizualization.model.Force
 import graphVizualization.model.ForceAtlas2
 import graphVizualization.view.EdgeView
 import graphVizualization.view.GraphView
@@ -29,9 +30,21 @@ class GraphController(
 
     fun startForceAtlas2() {
         cancelForceAtlas2()
-        forceAtlas2 = ForceAtlas2(graphView)
+        forceAtlas2.reset()
         forceAtlas2Service = ForceAtlas2Service()
         forceAtlas2Service.start()
+    }
+
+    fun setLinLogAttraction() {
+        forceAtlas2.attraction = Force.Factory.LinLogAttraction()
+    }
+
+    fun setDistanceAttraction() {
+        forceAtlas2.attraction = Force.Factory.DistanceAttraction()
+    }
+
+    fun setDissuadeHubsAttraction() {
+        forceAtlas2.attraction = Force.Factory.DissuadeHubsAttraction()
     }
 
     private var oldMousePos = Point2D(0.0, 0.0)

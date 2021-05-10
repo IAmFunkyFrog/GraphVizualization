@@ -1,39 +1,46 @@
 package graphVizualization.view
 
 import graphVizualization.styles.TopBarStyle
-import javafx.geometry.Insets
 import javafx.scene.Parent
-import javafx.scene.control.Label
-import javafx.scene.control.Menu
-import javafx.scene.control.MenuItem
-import javafx.scene.control.TextField
-import javafx.scene.layout.Background
-import javafx.scene.layout.BackgroundFill
-import javafx.scene.layout.CornerRadii
-import javafx.scene.paint.Color
+import javafx.scene.control.*
 import tornadofx.*
 
 class MainView() : View() {
     private val graphView = GraphView()
+    private val algorithms = mapOf(
+        "Distance" to graphView.controller::setDistanceAttraction,
+        "LinLog" to graphView.controller::setLinLogAttraction,
+        "Dissuade hubs" to graphView.controller::setDissuadeHubsAttraction
+    )
 
     private val forceAtlas2Inputs = listOf(
+        Pair("Attraction algorithm", ComboBox<String>().apply {
+            for(name in algorithms.keys) items.add(name)
+            selectionModel.selectedItemProperty().addListener { _, _, newValue ->
+                algorithms[newValue]?.let { it() }
+            }
+            value = "Choose an algorithm"
+        }),
+        Pair("BurnsHut mode", CheckBox().apply {
+            selectedProperty().addListener { _, _, newValue ->
+                graphView.controller.forceAtlas2.burnsHut = newValue
+            }
+            isSelected = graphView.controller.forceAtlas2.burnsHut
+        }),
+        Pair("Prevent overlapping mode", CheckBox().apply {
+            selectedProperty().addListener { _, _, newValue ->
+                graphView.controller.forceAtlas2.preventOverlapping = newValue
+            }
+            isSelected = graphView.controller.forceAtlas2.preventOverlapping
+        }),
+        Pair("burnsHutTheta", NumberField(graphView.controller.forceAtlas2.burnsHutTheta) {
+            graphView.controller.forceAtlas2.burnsHutTheta = it
+        }),
         Pair("repulsionCoefficient", NumberField(graphView.controller.forceAtlas2.repulsionCoefficient) {
             graphView.controller.forceAtlas2.repulsionCoefficient = it
         }),
         Pair("gravityCoefficient", NumberField(graphView.controller.forceAtlas2.gravityCoefficient) {
             graphView.controller.forceAtlas2.gravityCoefficient = it
-        }),
-        Pair("burnsHutTheta", NumberField(graphView.controller.forceAtlas2.burnsHutTheta) {
-            graphView.controller.forceAtlas2.burnsHutTheta = it
-        }),
-        Pair("speedCoefficient", NumberField(graphView.controller.forceAtlas2.speedCoefficient) {
-            graphView.controller.forceAtlas2.speedCoefficient = it
-        }),
-        Pair("maxSpeedCoefficient", NumberField(graphView.controller.forceAtlas2.maxSpeedCoefficient) {
-            graphView.controller.forceAtlas2.maxSpeedCoefficient = it
-        }),
-        Pair("toleranceCoefficient", NumberField(graphView.controller.forceAtlas2.toleranceCoefficient) {
-            graphView.controller.forceAtlas2.toleranceCoefficient = it
         })
     )
 
