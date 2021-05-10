@@ -1,13 +1,12 @@
-import javafx.beans.property.DoubleProperty
+import javafx.beans.property.StringProperty
 import javafx.geometry.Point2D
-import javafx.scene.paint.Color
-import kotlin.math.pow
 
 class LayoutData {
     var appliedForce: Point2D = Point2D(0.0, 0.0)
         private set
     var oldAppliedForce: Point2D = Point2D(0.0, 0.0)
         private set
+    var speed = 1.0
 
     fun applyForce(force: Point2D) {
         appliedForce = appliedForce.add(force)
@@ -18,8 +17,8 @@ class LayoutData {
     }
 }
 
-class Vertex<V>(
-    var value: V
+class Vertex(
+    val value: String
 ) {
     var layoutData: LayoutData = LayoutData()
 

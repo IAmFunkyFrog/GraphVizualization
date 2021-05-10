@@ -2,39 +2,83 @@ package graphVizualization.view
 
 import graphVizualization.controller.GraphController
 import graphVizualization.model.Graph
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.StringProperty
 import javafx.scene.layout.Pane
-import tornadofx.add
+import tornadofx.View
+import tornadofx.pane
 import java.lang.IllegalArgumentException
 
-class GraphView<V>(
-    private val graph: Graph<V>
-) : Pane() {
-    //TODO проверить с lazy
-    val vertices = graph.vertices().associateWith {
-            VertexView(it)
+class GraphView(
+    var name: StringProperty = SimpleStringProperty("Undefined")
+) : View() {
+
+    var graph: Graph = Graph.ControlGraph(200)
+    var vertices = graph.vertices().associateWith {
+        VertexView(it)
+    } as MutableMap
+    var edges = graph.edges().associateWith {
+        val vertexView1 = vertices[it.vertex1] ?: throw IllegalArgumentException()
+        val vertexView2 = vertices[it.vertex2] ?: throw IllegalArgumentException()
+        EdgeView(it, vertexView1, vertexView2)
+    } as MutableMap
+
+    val controller: GraphController = GraphController(this)
+
+    override val root: Pane = pane {
+        edges.values.forEach { e ->
+            add(e)
+            setHandlersOnEdge(e)
         }
-    val edges = graph.edges().associateWith {
+        vertices.values.forEach { v ->
+            add(v)
+            add(v.label)
+            setHandlersOnVertex(v)
+        }
+    }
+
+    fun setHandlersOnVertex(vertexView: VertexView) {
+        vertexView.setOnMousePressed {
+            controller.onPressVertex(it, vertexView)
+        }
+        vertexView.setOnMouseDragged {
+            vertexView.controller.onDrag(it, vertexView)
+        }
+        vertexView.setOnMouseEntered {
+            vertexView.controller.onMouseEntered(vertexView)
+        }
+        vertexView.setOnMouseExited {
+            vertexView.controller.onMouseExited(vertexView)
+        }
+    }
+
+    fun setHandlersOnEdge(edgeView: EdgeView) {
+        edgeView.setOnMousePressed {
+            if(it.isAltDown) openInternalWindow(edgeView.weightEditor)
+        }
+    }
+
+    fun resetGraph(graph: Graph, name: String) {
+        this.graph = graph
+        this.name.value = name
+        vertices = graph.vertices().associateWith {
+            VertexView(it)
+        } as MutableMap
+        edges = graph.edges().associateWith {
             val vertexView1 = vertices[it.vertex1] ?: throw IllegalArgumentException()
             val vertexView2 = vertices[it.vertex2] ?: throw IllegalArgumentException()
             EdgeView(it, vertexView1, vertexView2)
+        } as MutableMap
+        //TODO подумать как пофиксить кастыль
+        root.children.clear()
+        edges.values.forEach { e ->
+            root.add(e)
+            setHandlersOnEdge(e)
         }
-    val controller: GraphController<V> = GraphController(this)
-
-    init {
         vertices.values.forEach { v ->
             add(v)
-        }
-        edges.values.forEach { e ->
-            add(e)
-        }
-        this.setOnScroll {
-            controller.onScroll(it, this)
-        }
-        this.setOnMousePressed {
-            controller.onMousePressed(it, this)
-        }
-        this.setOnMouseDragged {
-            controller.onMouseDragged(it, this)
+            add(v.label)
+            setHandlersOnVertex(v)
         }
     }
 }

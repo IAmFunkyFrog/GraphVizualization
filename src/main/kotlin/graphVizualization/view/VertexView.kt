@@ -1,23 +1,45 @@
 package graphVizualization.view
 
 import Vertex
+import graphVizualization.controller.GraphController
+import graphVizualization.controller.VertexController
+import javafx.beans.property.BooleanProperty
+import javafx.beans.property.BooleanProperty.booleanProperty
+import javafx.beans.property.BooleanPropertyBase
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.geometry.Point2D
+import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import kotlin.random.Random
 import kotlin.random.nextUInt
-class VertexView<V>(
-    val vertex: Vertex<V>
+import tornadofx.*
+
+class VertexView(
+    val vertex: Vertex
 ): Circle() {
 
+    val controller = VertexController()
+
+    var visibleText: BooleanProperty = SimpleBooleanProperty(false)
+
     init {
-        radius = 5.0
-        centerX = Random.nextUInt().toDouble() % 1000
-        centerY = Random.nextUInt().toDouble() % 1000
+        radius = 15.0
+        centerX = Random.nextUInt().toDouble() % 300
+        centerY = Random.nextUInt().toDouble() % 300
+        fill = Color.RED
     }
 
-    constructor(vertex: Vertex<V>, point: Point2D): this(vertex) {
+    constructor(vertex: Vertex, point: Point2D): this(vertex) {
         centerX = point.x
         centerY = point.y
+    }
+
+    val label = text {
+        text = vertex.value
+        fill = Color.BLUE
+        xProperty().bind(centerXProperty() + radiusProperty())
+        yProperty().bind(centerYProperty() - radiusProperty())
+        visibleWhen(visibleText)
     }
 
     fun applyDisplacement(displacement: Point2D) {

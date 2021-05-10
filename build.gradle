@@ -1,10 +1,10 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
-    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.32'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
 }
 
 javafx {
-    version = "13"
+    version = "11"
     modules = [ 'javafx.controls', 'javafx.graphics', 'javafx.fxml' ]
 }
 
@@ -20,11 +20,11 @@ compileKotlin {
 }
 
 dependencies {
-    implementation 'no.tornado:tornadofx:1.7.19'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation 'no.tornado:tornadofx:1.7.18'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.4.32'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
+    implementation 'org.neo4j.driver:neo4j-java-driver:4.2.0'
 }
 
 test {
