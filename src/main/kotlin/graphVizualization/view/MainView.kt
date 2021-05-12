@@ -13,8 +13,7 @@ class MainView() : View() {
     private val sqliteSaveLoadController = SQLiteSaveLoadController(graphView)
     private val algorithms = mapOf(
         "Distance" to graphView.controller::setDistanceAttraction,
-        "LinLog" to graphView.controller::setLinLogAttraction,
-        "Dissuade hubs" to graphView.controller::setDissuadeHubsAttraction
+        "LinLog" to graphView.controller::setLinLogAttraction
     )
 
     private val forceAtlas2Inputs = listOf(
@@ -37,14 +36,24 @@ class MainView() : View() {
             }
             isSelected = graphView.controller.forceAtlas2.preventOverlapping
         }),
+        Pair("Dissuade hubs mode", CheckBox().apply {
+            selectedProperty().addListener { _, _, newValue ->
+                graphView.controller.forceAtlas2.dissuadeHubs = newValue
+            }
+            isSelected = graphView.controller.forceAtlas2.dissuadeHubs
+        }),
         Pair("burnsHutTheta", NumberField(graphView.controller.forceAtlas2.burnsHutTheta) {
             graphView.controller.forceAtlas2.burnsHutTheta = it
         }),
-        Pair("repulsionCoefficient", NumberField(graphView.controller.forceAtlas2.repulsionCoefficient) {
+        Pair("repulsion", NumberField(graphView.controller.forceAtlas2.repulsionCoefficient) {
             graphView.controller.forceAtlas2.repulsionCoefficient = it
         }),
-        Pair("gravityCoefficient", NumberField(graphView.controller.forceAtlas2.gravityCoefficient) {
+        Pair("gravity", NumberField(graphView.controller.forceAtlas2.gravityCoefficient) {
             graphView.controller.forceAtlas2.gravityCoefficient = it
+        }),
+        Pair("tolerance", NumberField(graphView.controller.forceAtlas2.gravityCoefficient) {
+            //TODO подумать над кастылем
+            if(it != 0.0) graphView.controller.forceAtlas2.toleranceCoefficient = it
         })
     )
 

@@ -5,8 +5,6 @@ import graphVizualization.view.VertexView
 import javafx.geometry.Point2D
 import kotlin.math.pow
 
-//TODO: реализовать режим предотвращения коллизий
-
 val VertexView.traction
     get() = vertex.layoutData.appliedForce.add(vertex.layoutData.oldAppliedForce).multiply(0.5).magnitude()
 
@@ -38,27 +36,20 @@ class ForceAtlas2(
             gravity.coefficient = value
         }
 
-    var burnsHutTheta = 1.0
+    var burnsHutTheta = 1.8
         set(value) {
             field = value
             if (this::rootRegion.isInitialized) rootRegion.theta = value
         }
 
-    var speedCoefficient = 0.1
+    var speedCoefficient = 0.5
     var maxSpeedCoefficient = 10.0
     var toleranceCoefficient = 1.0
     var burnsHut = false
     var preventOverlapping = true
+    var dissuadeHubs = false
     var overlappingCoefficient = 100.0
     var edgeWeightCoefficient = 0.0
-
-    init {
-        if(vertices.size < 50000) {
-            if(vertices.size < 5000) toleranceCoefficient = 0.1
-            else toleranceCoefficient = 1.0
-        }
-        else toleranceCoefficient = 10.0
-    }
 
     private val vCenter = Point2D(
         vertices.fold(0.0) { acc, vView -> acc + vView.centerX / vertices.size },
@@ -84,36 +75,36 @@ class ForceAtlas2(
         }
         //Attraction
         for (edgeView in edges) {
-            attraction.applyForce(edgeView.vertexView1, edgeView.vertexView2) { v1, v2 ->
-                attractionAdditionalCoefficient(v1, v2) * (edgeView.edge.weight).pow(edgeWeightCoefficient)
+            val weight = if(edgeWeightCoefficient == 0.0) 1.0 else (edgeView.edge.weight).pow(edgeWeightCoefficient)
+            val preventOverlappingValue = attractionAdditionalCoefficient(edgeView.vertexView1, edgeView.vertexView2)
+            attraction.applyForce(edgeView.vertexView1, edgeView.vertexView2) { v1, _ ->
+                if(dissuadeHubs) preventOverlappingValue * weight / (v1.vertex.degree + 1)
+                else preventOverlappingValue * weight
             }
-            attraction.applyForce(edgeView.vertexView2, edgeView.vertexView1) { v1, v2 ->
-                attractionAdditionalCoefficient(v1, v2) * (edgeView.edge.weight).pow(edgeWeightCoefficient)
+            attraction.applyForce(edgeView.vertexView2, edgeView.vertexView1) { v1, _ ->
+                if(dissuadeHubs) preventOverlappingValue * weight / (v1.vertex.degree + 1)
+                else preventOverlappingValue * weight
             }
         }
+
         //Gravity
         for (vertexView in vertices) {
             gravity.applyForce(vCenter, vertexView)
         }
         //Global speed computation
-        val traction = vertices.fold(0.0) { acc, v ->
-            acc + (v.vertex.degree + 1) * v.traction
+        val (swing, traction) = vertices.fold(Pair(0.0, 0.0)) { acc, v ->
+            Pair(acc.first + (v.vertex.degree + 1) * v.swing, acc.second + (v.vertex.degree + 1) * v.traction)
         }
-        val swing = vertices.fold(0.0) { acc, v ->
-            acc + (v.vertex.degree + 1) * v.swing
-        }
-        val globalSpeed =
-            toleranceCoefficient * traction / swing //TODO: проверить, будет ли эффект, если ограничить как у авторов
+        val globalSpeed = toleranceCoefficient * traction / swing
         //Displacement of vertices computation
         for (vertexView in vertices) {
             val speed = minOf(
-                speedCoefficient * globalSpeed / (1 + globalSpeed * swing.pow(0.5)),
+                speedCoefficient * globalSpeed / (1.0 + globalSpeed * swing.pow(0.5)),
                 maxSpeedCoefficient / vertexView.vertex.layoutData.appliedForce.magnitude()
             )
 
             vertexView.vertex.layoutData.speed = speed
         }
-
         return vertices.associateWith {
             Point2D(
                 it.vertex.layoutData.appliedForce.x * it.vertex.layoutData.speed,

@@ -20,8 +20,6 @@ class EdgeView(
         strokeWidth = 3.0
     }
 
-    val weightEditor = WeightEditor()
-
     inner class WeightEditor() : Fragment() {
         override val root: Parent = vbox {
             NumberField(edge.weight) {
