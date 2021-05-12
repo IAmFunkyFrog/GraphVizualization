@@ -18,7 +18,7 @@ class LayoutData {
 }
 
 class Vertex(
-    val value: String
+    var value: String
 ) {
     var layoutData: LayoutData = LayoutData()
     var centrality: Double? = null

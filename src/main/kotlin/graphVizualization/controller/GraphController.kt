@@ -106,6 +106,18 @@ class GraphController(
         }
     }
 
+    fun removeVertex(vertexView: VertexView) {
+        graphView.graph.removeVertex(vertexView.vertex)
+        graphView.root.children.remove(vertexView)
+        graphView.vertices.remove(vertexView.vertex)
+    }
+
+    fun removeEdge(edgeView: EdgeView) {
+        graphView.graph.removeEdge(edgeView.edge)
+        graphView.root.children.remove(edgeView)
+        graphView.edges.remove(edgeView.edge)
+    }
+
     private inner class ForceAtlas2Service : ScheduledService<Unit>() {
         private lateinit var lastDisplacement: Map<VertexView, Point2D>
 

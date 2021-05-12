@@ -24,6 +24,10 @@ class Graph(
         }
     }
 
+    fun removeVertex(vertex: Vertex) = vertices.remove(vertex)
+
+    fun removeEdge(edge: Edge) = edges.remove(edge)
+
     fun vertices() = vertices.toList()
     fun edges() = edges.toList()
 
