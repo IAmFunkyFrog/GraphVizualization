@@ -22,15 +22,10 @@ class VertexView(
     var visibleText: BooleanProperty = SimpleBooleanProperty(false)
 
     init {
-        radius = 15.0
-        centerX = Random.nextInt().absoluteValue.toDouble() % 300
-        centerY = Random.nextInt().absoluteValue.toDouble() % 300
+        radius = vertex.layoutData.radius
+        centerX = vertex.layoutData.delta.x
+        centerY = vertex.layoutData.delta.y
         fill = Color.RED
-    }
-
-    constructor(vertex: Vertex, point: Point2D): this(vertex) {
-        centerX = point.x
-        centerY = point.y
     }
 
     val label = text {

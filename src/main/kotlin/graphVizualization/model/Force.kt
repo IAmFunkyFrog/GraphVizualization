@@ -1,6 +1,6 @@
 package graphVizualization.model
 
-import graphVizualization.view.VertexView
+import Vertex
 import javafx.geometry.Point2D
 import kotlin.math.ln
 
@@ -11,49 +11,49 @@ abstract class Force {
 
     abstract val forceFunction: ForceFunction
 
-    fun applyForce(vertexFrom: VertexView, vertexTo: VertexView, additionalCoefficient: ((VertexView, VertexView) -> Double)? = null) {
+    fun applyForce(vertexFrom: Vertex, vertexTo: Vertex, additionalCoefficient: ((Vertex, Vertex) -> Double)? = null) {
         var forceVector = forceFunction(
-            Point2D(vertexFrom.centerX, vertexFrom.centerY),
-            Point2D(vertexTo.centerX, vertexTo.centerY),
-            vertexFrom.vertex.degree.toDouble(),
-            vertexTo.vertex.degree.toDouble(),
+            Point2D(vertexFrom.layoutData.delta.x, vertexFrom.layoutData.delta.y),
+            Point2D(vertexTo.layoutData.delta.x, vertexTo.layoutData.delta.y),
+            vertexFrom.degree.toDouble(),
+            vertexTo.degree.toDouble(),
         )
 
         if(additionalCoefficient != null) forceVector = forceVector.multiply(additionalCoefficient(vertexFrom, vertexTo))
 
-        vertexTo.vertex.layoutData.applyForce(forceVector)
+        vertexTo.layoutData.applyForce(forceVector)
     }
 
-    fun applyForce(region: BurnsHutRegion, vertexTo: VertexView, additionalCoefficient: ((VertexView, VertexView) -> Double)? = null) {
+    fun applyForce(region: BurnsHutRegion, vertexTo: Vertex, additionalCoefficient: ((Vertex, Vertex) -> Double)? = null) {
         if (region.vertices.size == 1 && region.vertices[0] != vertexTo) {
             applyForce(region.vertices[0], vertexTo, additionalCoefficient)
         } else {
-            val distance = region.massCenter.distance(vertexTo.centerX, vertexTo.centerY)
+            val distance = region.massCenter.distance(vertexTo.layoutData.delta.x, vertexTo.layoutData.delta.y)
             if (region.cellSize < distance * region.theta) {
                 val forceVector = forceFunction(
                     region.massCenter,
-                    Point2D(vertexTo.centerX, vertexTo.centerY),
+                    Point2D(vertexTo.layoutData.delta.x, vertexTo.layoutData.delta.y),
                     region.mass,
-                    vertexTo.vertex.degree.toDouble(),
+                    vertexTo.degree.toDouble(),
                 )
-                vertexTo.vertex.layoutData.applyForce(forceVector)
+                vertexTo.layoutData.applyForce(forceVector)
             } else {
                 for (subRegion in region.subRegions) applyForce(subRegion, vertexTo)
             }
         }
     }
 
-    fun applyForce(pointFrom: Point2D, vertexTo: VertexView, additionalCoefficient: ((Point2D, VertexView) -> Double)? = null) {
+    fun applyForce(pointFrom: Point2D, vertexTo: Vertex, additionalCoefficient: ((Point2D, Vertex) -> Double)? = null) {
         var forceVector = forceFunction(
             pointFrom,
-            Point2D(vertexTo.centerX, vertexTo.centerY),
+            Point2D(vertexTo.layoutData.delta.x, vertexTo.layoutData.delta.y),
             1.0, //MUST NOT BE USED IN CALCULATIONS
-            vertexTo.vertex.degree.toDouble(),
+            vertexTo.degree.toDouble(),
         )
 
         if(additionalCoefficient != null) forceVector = forceVector.multiply(additionalCoefficient(pointFrom, vertexTo))
 
-        vertexTo.vertex.layoutData.applyForce(forceVector)
+        vertexTo.layoutData.applyForce(forceVector)
     }
 
     companion object Factory {

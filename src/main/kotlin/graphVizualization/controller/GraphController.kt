@@ -20,7 +20,7 @@ class GraphController(
     private val graphView: GraphView
 ) : Controller() {
 
-    var forceAtlas2 = ForceAtlas2(graphView)
+    var forceAtlas2 = ForceAtlas2(graphView.graph)
 
     private var forceAtlas2Service = ForceAtlas2Service()
 
@@ -119,16 +119,13 @@ class GraphController(
     }
 
     private inner class ForceAtlas2Service : ScheduledService<Unit>() {
-        private lateinit var lastDisplacement: Map<VertexView, Point2D>
 
         init {
             period = Duration(10.0)
             onSucceeded = EventHandler {
-                if (this::lastDisplacement.isInitialized) {
-                    for ((vView, displacement) in lastDisplacement) {
-                        vView.centerX += displacement.x
-                        vView.centerY += displacement.y
-                    }
+                for ((v, vView) in graphView.vertices) {
+                    vView.centerX = v.layoutData.delta.x
+                    vView.centerY = v.layoutData.delta.y
                 }
             }
         }
@@ -137,7 +134,7 @@ class GraphController(
 
         private inner class IterationTask : Task<Unit>() {
             override fun call() {
-                lastDisplacement = forceAtlas2.doIteration()
+                forceAtlas2.doIteration()
             }
         }
 

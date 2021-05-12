@@ -5,8 +5,8 @@ import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 class Graph(
-    private val vertices: MutableCollection<Vertex>,
-    private val edges: MutableCollection<Edge>,
+    val vertices: MutableCollection<Vertex>,
+    val edges: MutableCollection<Edge>,
 ) {
 
     fun addVertex(vertex: Vertex): Vertex? {
