@@ -1,5 +1,7 @@
 package graphVizualization.model
 
+import Vertex
+import javafx.geometry.Point2D
 import org.neo4j.driver.AuthTokens
 import org.neo4j.driver.GraphDatabase
 import java.io.Closeable
@@ -24,18 +26,27 @@ class DBConnection(
                     ) as Map<String, Any>?
                 )
                 for (vertex in graph.vertices()) it.run(
-                    "MATCH (g:Graph {name: \$name}) MERGE (v:Vertex {value: \$value})-[:IN]->(g)",
+                    "MATCH (g:Graph {name: \$name}) MERGE (v:Vertex {value: \$value, centerX: \$centerX, centerY: \$centerY, centrality: \$centrality})-[:IN]->(g)",
                     mutableMapOf(
                         "name" to name,
-                        "value" to vertex.value
+                        "value" to vertex.value,
+                        "centerX" to vertex.layoutData.delta.x,
+                        "centerY" to vertex.layoutData.delta.y,
+                        "centrality" to vertex.centrality
                     ) as Map<String, Any>?
                 )
                 for (edge in graph.edges()) it.run(
-                    "MATCH (g:Graph {name: \$name}) MERGE (v1:Vertex {value: \$value1})-[:IN]->(g) MERGE (v2:Vertex {value: \$value2})-[:IN]->(g) MERGE (v1)-[:CONNECTED {weight: \$weight}]-(v2)",
+                    "MATCH (g:Graph {name: \$name}) MERGE (v1:Vertex {value: \$value1, centerX: \$centerX1, centerY: \$centerY1, centrality: \$centrality1})-[:IN]->(g) MERGE (v2:Vertex {value: \$value2, centerX: \$centerX2, centerY: \$centerY2, centrality: \$centrality2})-[:IN]->(g) MERGE (v1)-[:CONNECTED {weight: \$weight}]-(v2)",
                     mutableMapOf(
                         "name" to name,
                         "value1" to edge.vertex1.value,
                         "value2" to edge.vertex2.value,
+                        "centerX1" to edge.vertex1.layoutData.delta.x,
+                        "centerX2" to edge.vertex2.layoutData.delta.x,
+                        "centerY1" to edge.vertex1.layoutData.delta.y,
+                        "centerY2" to edge.vertex2.layoutData.delta.y,
+                        "centrality1" to edge.vertex1.centrality,
+                        "centrality2" to edge.vertex2.centrality,
                         "weight" to edge.weight
                     ) as Map<String, Any>?
                 )
@@ -58,7 +69,7 @@ class DBConnection(
         }
     }
 
-    fun getVertexValuesByGraphName(name: String) = mutableListOf<String>().apply {
+    fun getVerticesByGraphName(name: String) = mutableListOf<Vertex>().apply {
         session.writeTransaction { tx ->
             try {
                 val vertexValues = tx.run(
@@ -67,8 +78,11 @@ class DBConnection(
                         "name" to name
                     ) as Map<String, Any>?
                 )
-                for(vertex in vertexValues) vertex.get("value").asString().also {
-                    this.add(it)
+                for(vertex in vertexValues) {
+                    this.add(Vertex(vertex.get("value").asString()).apply {
+                        layoutData.delta = Point2D(vertex.get("centerX").asDouble(), vertex.get("centerY").asDouble())
+                        centrality = vertex.get("centrality").asDouble()
+                    })
                 }
             } catch (e: Exception) {
                 //TODO подумать над включением логера в проект

@@ -24,7 +24,7 @@ class Neo4jSaveLoadController : Controller() {
     }
 
     fun getGraphByName(name: String): Graph = DBConnection(uri, username, password).use {
-        val vertices = it.getVertexValuesByGraphName(name).map { value -> value to Vertex(value) }.toMap()
+        val vertices = it.getVerticesByGraphName(name).map { v -> v.value to v }.toMap()
         val edges = it.getEdgeValuesByGraphName(name).map { (value1, value2, weight) ->
             val vertex1 = vertices[value1] ?: throw IllegalArgumentException()
             val vertex2 = vertices[value2] ?: throw IllegalArgumentException()
