@@ -31,40 +31,31 @@ class Graph(
 
         fun EmptyGraph() = Graph(ArrayList(), ArrayList())
 
-        fun ControlGraph(n: Int): Graph {
+        fun ControlGraph(n: Int, pCount: Int): Graph {
             val graph = Graph(ArrayList(), ArrayList())
 
             for(i in 1..n) graph.vertices.add(Vertex(i.toString()))
 
             val vertices = graph.vertices()
-            val part = vertices.size / 6
-            val edgesCount = n * 2
+            val part = vertices.size / pCount
+            val edgesCount = n
             for(i in 1..edgesCount) {
                 val v1 = Random.nextInt().absoluteValue % part
                 val v2 = Random.nextInt().absoluteValue % part
-                graph.addEdge(Edge(vertices[v1], vertices[v2], Random.nextDouble()))
-                graph.addEdge(Edge(vertices[v1 + part], vertices[v2 + part], Random.nextDouble()))
-                graph.addEdge(Edge(vertices[v1 + part * 2], vertices[v2 + part * 2], Random.nextDouble()))
-                graph.addEdge(Edge(vertices[v1 + part * 3], vertices[v2 + part * 3], Random.nextDouble()))
-                graph.addEdge(Edge(vertices[v1 + part * 4], vertices[v2 + part * 4], Random.nextDouble()))
-                graph.addEdge(Edge(vertices[v1 + part * 5], vertices[v2 + part * 5], Random.nextDouble()))
+                for(j in 0 until pCount) graph.addEdge(Edge(vertices[v1 + part * j], vertices[v2 + part * j], Random.nextDouble()))
             }
 
-            graph.addEdge(Edge(vertices[0], vertices[part], Random.nextDouble()))
-            graph.addEdge(Edge(vertices[part], vertices[part * 2], Random.nextDouble()))
-            graph.addEdge(Edge(vertices[part * 2], vertices[part * 3], Random.nextDouble()))
-            graph.addEdge(Edge(vertices[part * 3], vertices[part * 4], Random.nextDouble()))
-            graph.addEdge(Edge(vertices[part * 4], vertices[part * 5], Random.nextDouble()))
+            for(j in 0 until pCount - 1) graph.addEdge(Edge(vertices[part * j], vertices[part * (j + 1)], Random.nextDouble()))
 
             return graph
         }
 
-        fun RandomGraph(): Graph {
+        fun RandomGraph(n: Int): Graph {
             val graph = Graph(ArrayList(), ArrayList())
 
-            for(i in 1..100) graph.vertices.add(Vertex(i.toString()))
+            for(i in 1..n) graph.vertices.add(Vertex(i.toString()))
 
-            val edgesCount = 100
+            val edgesCount = n
             val vertices = graph.vertices()
             for(i in 1..edgesCount) {
                 val v1 = Random.nextInt().absoluteValue % vertices.size
