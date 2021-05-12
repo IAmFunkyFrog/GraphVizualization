@@ -14,16 +14,15 @@ class BurnsHutRegion(
             field = value
             for (region in subRegions) region.theta = theta
         }
-    //TODO проверить корректность алгоритма при установке массы >= 1
     val mass = vertices.fold(0.0) { acc, vView ->
         acc + vView.vertex.degree + 1
     }
     val massCenter = Point2D(
         vertices.fold(0.0) { acc, vView ->
-            acc + vView.centerX * vView.vertex.degree
+            acc + vView.centerX * (vView.vertex.degree + 1)
         } / mass,
         vertices.fold(0.0) { acc, vView ->
-            acc + vView.centerY * vView.vertex.degree
+            acc + vView.centerY * (vView.vertex.degree + 1)
         } / mass
     )
     val cellSize = vertices.fold(Double.MIN_VALUE) { m, vView ->
@@ -31,29 +30,25 @@ class BurnsHutRegion(
     }
 
     init {
+        //println("regions ${++regions}")
+        //println("zero size ${vertices.size} ${massCenter} ${Point2D(vertices[0].centerX, vertices[0].centerY)} ${cellSize}")
         makeSubRegions()
     }
 
     private fun makeSubRegions() {
         if (vertices.size <= 1) return
 
-        val upLefts = vertices.filter {
-            it.centerX < massCenter.x && it.centerY < massCenter.y
+        val lefts = vertices.filter {
+            it.centerX < massCenter.x
         }
-        val upRights = vertices.filter {
-            it.centerX >= massCenter.x && it.centerY < massCenter.y
-        }
-        val downLefts = vertices.filter {
-            it.centerX < massCenter.x && it.centerY >= massCenter.y
-        }
-        val downRights = vertices.filter {
-            it.centerX >= massCenter.x && it.centerY >= massCenter.y
+        val rights = vertices.filter {
+            it.centerX >= massCenter.x
         }
 
-        makeSubRegion(upLefts)
-        makeSubRegion(upRights)
-        makeSubRegion(downLefts)
-        makeSubRegion(downRights)
+        makeSubRegion(lefts.filter { it.centerY < massCenter.y })
+        makeSubRegion(lefts.filter { it.centerY >= massCenter.y })
+        makeSubRegion(rights.filter { it.centerY < massCenter.y })
+        makeSubRegion(rights.filter { it.centerY >= massCenter.y })
     }
 
     private fun makeSubRegion(subVertices: List<VertexView>) {
@@ -66,5 +61,9 @@ class BurnsHutRegion(
                 }
             }
         }
+    }
+
+    companion object {
+        private var regions = 0
     }
 }
