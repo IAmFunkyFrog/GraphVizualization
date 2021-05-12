@@ -13,6 +13,7 @@ import javafx.scene.shape.Circle
 import kotlin.random.Random
 import kotlin.random.nextUInt
 import tornadofx.*
+import kotlin.math.absoluteValue
 
 class VertexView(
     val vertex: Vertex
@@ -24,8 +25,8 @@ class VertexView(
 
     init {
         radius = 15.0
-        centerX = Random.nextUInt().toDouble() % 300
-        centerY = Random.nextUInt().toDouble() % 300
+        centerX = Random.nextInt().absoluteValue.toDouble() % 400
+        centerY = Random.nextInt().absoluteValue.toDouble() % 400
         fill = Color.RED
     }
 

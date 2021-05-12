@@ -42,10 +42,10 @@ class Graph(
             for(i in 1..edgesCount) {
                 val v1 = Random.nextInt().absoluteValue % part
                 val v2 = Random.nextInt().absoluteValue % part
-                for(j in 0 until pCount) graph.addEdge(Edge(vertices[v1 + part * j], vertices[v2 + part * j], Random.nextDouble()))
+                for(j in 0 until pCount) graph.addEdge(Edge(vertices[v1 + part * j], vertices[v2 + part * j], 1.0))
             }
 
-            for(j in 0 until pCount - 1) graph.addEdge(Edge(vertices[part * j], vertices[part * (j + 1)], Random.nextDouble()))
+            for(j in 0 until pCount - 1) graph.addEdge(Edge(vertices[part * j], vertices[part * (j + 1)], 1.0))
 
             return graph
         }

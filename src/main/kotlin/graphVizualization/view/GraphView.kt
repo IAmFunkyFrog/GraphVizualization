@@ -13,7 +13,7 @@ class GraphView(
     var name: StringProperty = SimpleStringProperty("Undefined")
 ) : View() {
 
-    var graph: Graph = Graph.ControlGraph(200)
+    var graph: Graph = Graph.ControlGraph(500, 3)
     var vertices = graph.vertices().associateWith {
         VertexView(it)
     } as MutableMap
@@ -54,7 +54,7 @@ class GraphView(
 
     fun setHandlersOnEdge(edgeView: EdgeView) {
         edgeView.setOnMousePressed {
-            if(it.isAltDown) openInternalWindow(edgeView.weightEditor)
+            if(it.isAltDown) openInternalWindow(edgeView.WeightEditor())
         }
     }
 
