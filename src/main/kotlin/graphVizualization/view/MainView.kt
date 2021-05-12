@@ -1,5 +1,7 @@
 package graphVizualization.view
 
+import graphVizualization.controller.CentralityController
+import graphVizualization.controller.SQLiteSaveLoadController
 import graphVizualization.styles.TopBarStyle
 import javafx.scene.Parent
 import javafx.scene.control.*
@@ -7,6 +9,8 @@ import tornadofx.*
 
 class MainView() : View() {
     private val graphView = GraphView()
+    private val centralityController = CentralityController(graphView)
+    private val sqliteSaveLoadController = SQLiteSaveLoadController(graphView)
     private val algorithms = mapOf(
         "Distance" to graphView.controller::setDistanceAttraction,
         "LinLog" to graphView.controller::setLinLogAttraction,
@@ -71,6 +75,11 @@ class MainView() : View() {
                         openInternalWindow(Neo4jSaveFragment(graphView.graph, graphView.name))
                     }
                 })
+                it.items.add(MenuItem("in SQLite").apply {
+                    setOnAction {
+                        sqliteSaveLoadController.saveGraph()
+                    }
+                })
             }
             Menu("Load").also {
                 this.menus.add(it)
@@ -80,10 +89,21 @@ class MainView() : View() {
                         openInternalWindow(Neo4jLoadFragment(graphView))
                     }
                 })
+                it.items.add(MenuItem("from SQLite").apply {
+                    setOnAction {
+                        sqliteSaveLoadController.loadGraph()
+                    }
+                })
             }
         }
         right = scrollpane {
             vbox {
+                button("Start centrality") {
+                    action {
+                        centralityController.toggle()
+                        text = if (centralityController.toggled) "Stop centrality" else "Start centrality"
+                    }
+                }
                 button("Start") {
                     action {
                         graphView.controller.startForceAtlas2()
