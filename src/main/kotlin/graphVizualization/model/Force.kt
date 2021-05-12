@@ -3,7 +3,6 @@ package graphVizualization.model
 import graphVizualization.view.VertexView
 import javafx.geometry.Point2D
 import kotlin.math.ln
-import kotlin.math.nextUp
 
 typealias ForceFunction = (Point2D, Point2D, Double, Double) -> Point2D
 
@@ -26,11 +25,11 @@ abstract class Force {
     }
 
     fun applyForce(region: BurnsHutRegion, vertexTo: VertexView, additionalCoefficient: ((VertexView, VertexView) -> Double)? = null) {
-        if (region.vertices.size == 1) {
+        if (region.vertices.size == 1 && region.vertices[0] != vertexTo) {
             applyForce(region.vertices[0], vertexTo, additionalCoefficient)
         } else {
             val distance = region.massCenter.distance(vertexTo.centerX, vertexTo.centerY)
-            if (region.cellSize <= distance * region.theta) {
+            if (region.cellSize < distance * region.theta) {
                 val forceVector = forceFunction(
                     region.massCenter,
                     Point2D(vertexTo.centerX, vertexTo.centerY),
@@ -58,7 +57,6 @@ abstract class Force {
     }
 
     companion object Factory {
-
         class DistanceAttraction: Force() {
             override val forceFunction: ForceFunction = { pointFrom, pointTo, _, _ ->
                 val forceValue = pointFrom.distance(pointTo)
@@ -72,16 +70,6 @@ abstract class Force {
         class LinLogAttraction: Force() {
             override val forceFunction: ForceFunction = { pointFrom, pointTo, _, _ ->
                 val forceValue = ln(1 + pointFrom.distance(pointTo))
-                Point2D(
-                    pointFrom.x - pointTo.x,
-                    pointFrom.y - pointTo.y
-                ).normalize().multiply(forceValue)
-            }
-        }
-
-        class DissuadeHubsAttraction: Force() {
-            override val forceFunction: ForceFunction = { pointFrom, pointTo, massFrom, _ ->
-                val forceValue = pointFrom.distance(pointTo) / (massFrom + 1)
                 Point2D(
                     pointFrom.x - pointTo.x,
                     pointFrom.y - pointTo.y
