@@ -21,6 +21,7 @@ class Vertex(
     val value: String
 ) {
     var layoutData: LayoutData = LayoutData()
+    var centrality: Double? = null
 
     var degree: Int = 0
         private set
