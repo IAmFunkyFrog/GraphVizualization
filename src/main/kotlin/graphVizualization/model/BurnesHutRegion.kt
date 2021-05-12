@@ -30,8 +30,6 @@ class BurnsHutRegion(
     }
 
     init {
-        //println("regions ${++regions}")
-        //println("zero size ${vertices.size} ${massCenter} ${Point2D(vertices[0].centerX, vertices[0].centerY)} ${cellSize}")
         makeSubRegions()
     }
 
@@ -61,9 +59,5 @@ class BurnsHutRegion(
                 }
             }
         }
-    }
-
-    companion object {
-        private var regions = 0
     }
 }
