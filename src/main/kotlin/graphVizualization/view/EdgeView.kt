@@ -20,9 +20,9 @@ class EdgeView(
         strokeWidth = 3.0
     }
 
-    val weightEditor = WeightEditor()
-
-    inner class WeightEditor() : Fragment() {
+    inner class EdgeEditor(
+        onDelete: () -> Unit
+    ) : Fragment() {
         override val root: Parent = vbox {
             NumberField(edge.weight) {
                 edge.weight = it
@@ -34,7 +34,7 @@ class EdgeView(
             }
             button("Delete") {
                 action {
-
+                    onDelete()
                 }
             }
         }

@@ -13,7 +13,7 @@ class GraphView(
     var name: StringProperty = SimpleStringProperty("Undefined")
 ) : View() {
 
-    var graph: Graph = Graph.ControlGraph(200)
+    var graph: Graph = Graph.ControlGraph(100, 2)
     var vertices = graph.vertices().associateWith {
         VertexView(it)
     } as MutableMap
@@ -39,7 +39,13 @@ class GraphView(
 
     fun setHandlersOnVertex(vertexView: VertexView) {
         vertexView.setOnMousePressed {
-            controller.onPressVertex(it, vertexView)
+            if(it.isAltDown) openInternalWindow(vertexView.VertexEditor {
+                controller.removeVertex(vertexView)
+                edges.values
+                    .filter { e -> e.vertexView1 == vertexView || e.vertexView2 == vertexView }
+                    .forEach { e -> controller.removeEdge(e) }
+            })
+            else controller.onPressVertex(it, vertexView)
         }
         vertexView.setOnMouseDragged {
             vertexView.controller.onDrag(it, vertexView)
@@ -54,7 +60,9 @@ class GraphView(
 
     fun setHandlersOnEdge(edgeView: EdgeView) {
         edgeView.setOnMousePressed {
-            if(it.isAltDown) openInternalWindow(edgeView.weightEditor)
+            if(it.isAltDown) openInternalWindow(edgeView.EdgeEditor {
+                controller.removeEdge(edgeView)
+            })
         }
     }
 

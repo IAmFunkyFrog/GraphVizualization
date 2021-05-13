@@ -1,5 +1,7 @@
 package graphVizualization.view
 
+import graphVizualization.controller.CentralityController
+import graphVizualization.controller.SQLiteSaveLoadController
 import graphVizualization.styles.TopBarStyle
 import javafx.scene.Parent
 import javafx.scene.control.*
@@ -7,10 +9,11 @@ import tornadofx.*
 
 class MainView() : View() {
     private val graphView = GraphView()
+    private val centralityController = CentralityController(graphView)
+    private val sqliteSaveLoadController = SQLiteSaveLoadController(graphView)
     private val algorithms = mapOf(
         "Distance" to graphView.controller::setDistanceAttraction,
-        "LinLog" to graphView.controller::setLinLogAttraction,
-        "Dissuade hubs" to graphView.controller::setDissuadeHubsAttraction
+        "LinLog" to graphView.controller::setLinLogAttraction
     )
 
     private val forceAtlas2Inputs = listOf(
@@ -33,14 +36,26 @@ class MainView() : View() {
             }
             isSelected = graphView.controller.forceAtlas2.preventOverlapping
         }),
+        Pair("Dissuade hubs mode", CheckBox().apply {
+            selectedProperty().addListener { _, _, newValue ->
+                graphView.controller.forceAtlas2.dissuadeHubs = newValue
+            }
+            isSelected = graphView.controller.forceAtlas2.dissuadeHubs
+        }),
         Pair("burnsHutTheta", NumberField(graphView.controller.forceAtlas2.burnsHutTheta) {
             graphView.controller.forceAtlas2.burnsHutTheta = it
         }),
-        Pair("repulsionCoefficient", NumberField(graphView.controller.forceAtlas2.repulsionCoefficient) {
+        Pair("repulsion", NumberField(graphView.controller.forceAtlas2.repulsionCoefficient) {
             graphView.controller.forceAtlas2.repulsionCoefficient = it
         }),
-        Pair("gravityCoefficient", NumberField(graphView.controller.forceAtlas2.gravityCoefficient) {
+        Pair("gravity", NumberField(graphView.controller.forceAtlas2.gravityCoefficient) {
             graphView.controller.forceAtlas2.gravityCoefficient = it
+        }),
+        Pair("tolerance", NumberField(graphView.controller.forceAtlas2.toleranceCoefficient) {
+            graphView.controller.forceAtlas2.toleranceCoefficient = it
+        }),
+        Pair("edgeWeightDegree", NumberField(graphView.controller.forceAtlas2.edgeWeightCoefficient) {
+            graphView.controller.forceAtlas2.edgeWeightCoefficient = it
         })
     )
 
@@ -71,6 +86,11 @@ class MainView() : View() {
                         openInternalWindow(Neo4jSaveFragment(graphView.graph, graphView.name))
                     }
                 })
+                it.items.add(MenuItem("in SQLite").apply {
+                    setOnAction {
+                        sqliteSaveLoadController.saveGraph()
+                    }
+                })
             }
             Menu("Load").also {
                 this.menus.add(it)
@@ -80,10 +100,21 @@ class MainView() : View() {
                         openInternalWindow(Neo4jLoadFragment(graphView))
                     }
                 })
+                it.items.add(MenuItem("from SQLite").apply {
+                    setOnAction {
+                        sqliteSaveLoadController.loadGraph()
+                    }
+                })
             }
         }
         right = scrollpane {
             vbox {
+                button("Start centrality") {
+                    action {
+                        centralityController.toggle()
+                        text = if (centralityController.toggled) "Stop centrality" else "Start centrality"
+                    }
+                }
                 button("Start") {
                     action {
                         graphView.controller.startForceAtlas2()
