@@ -51,9 +51,11 @@ class MainView() : View() {
         Pair("gravity", NumberField(graphView.controller.forceAtlas2.gravityCoefficient) {
             graphView.controller.forceAtlas2.gravityCoefficient = it
         }),
-        Pair("tolerance", NumberField(graphView.controller.forceAtlas2.gravityCoefficient) {
-            //TODO подумать над кастылем
-            if(it != 0.0) graphView.controller.forceAtlas2.toleranceCoefficient = it
+        Pair("tolerance", NumberField(graphView.controller.forceAtlas2.toleranceCoefficient) {
+            graphView.controller.forceAtlas2.toleranceCoefficient = it
+        }),
+        Pair("edgeWeightDegree", NumberField(graphView.controller.forceAtlas2.edgeWeightCoefficient) {
+            graphView.controller.forceAtlas2.edgeWeightCoefficient = it
         })
     )
 
