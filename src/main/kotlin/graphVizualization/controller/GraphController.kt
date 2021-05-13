@@ -7,6 +7,7 @@ import graphVizualization.model.ForceAtlas2
 import graphVizualization.view.EdgeView
 import graphVizualization.view.GraphView
 import graphVizualization.view.VertexView
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.concurrent.ScheduledService
 import javafx.concurrent.Task
 import javafx.event.EventHandler
@@ -21,15 +22,19 @@ class GraphController(
 ) : Controller() {
 
     var forceAtlas2 = ForceAtlas2(graphView.graph)
+    var forceAtlas2Running = false
+    private set
 
     private var forceAtlas2Service = ForceAtlas2Service()
 
     fun cancelForceAtlas2() {
+        forceAtlas2Running = false
         forceAtlas2Service.cancel()
     }
 
     fun startForceAtlas2() {
         cancelForceAtlas2()
+        forceAtlas2Running = true
         forceAtlas2.reset()
         forceAtlas2Service = ForceAtlas2Service()
         forceAtlas2Service.start()
