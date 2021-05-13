@@ -115,6 +115,18 @@ class MainView() : View() {
                         text = if (centralityController.toggled) "Stop centrality" else "Start centrality"
                     }
                 }
+                //TODO сделать нормально
+                NumberField(1.13) {
+                    for((v, vView) in graphView.vertices) {
+                        v.centralityScale = it
+                        vView.radius = v.layoutData.radius
+                    }
+                }.also {
+                    label("centralityScale") {
+                        labelFor = it
+                    }
+                    add(it)
+                }
                 button("Start") {
                     action {
                         graphView.controller.startForceAtlas2()
