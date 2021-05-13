@@ -115,10 +115,21 @@ class MainView() : View() {
                 label("Centrality settings").apply {
                     font = Font.font("Tahoma", FontWeight.BOLD, 15.0)
                 }
-                button("Calculate centrality") {
+                ProgressBar().also {
+                    it.visibleProperty().bind(centralityController.inProgress)
+                    add(it)
+                    button("Calculate centrality") {
+                        action {
+                            centralityController.toggle()
+                        }
+                    }
+                }
+                button("Reset centrality to default") {
                     action {
-                        centralityController.toggle()
-                        text = if (centralityController.toggled) "Calculated centrality" else "Calculate centrality"
+                        for((v, vView) in graphView.vertices) {
+                            v.centrality = 0.0
+                            vView.radius = v.layoutData.radius
+                        }
                     }
                 }
                 //TODO сделать нормально
@@ -146,6 +157,11 @@ class MainView() : View() {
                             text = "Start ForceAtlas2"
                             graphView.controller.cancelForceAtlas2()
                         }
+                    }
+                }
+                button("Shuffle") {
+                    action {
+                        graphView.controller.shuffle()
                     }
                 }
                 for ((desc, input) in forceAtlas2Inputs) {
