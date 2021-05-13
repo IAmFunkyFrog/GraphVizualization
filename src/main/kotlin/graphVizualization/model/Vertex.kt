@@ -5,7 +5,7 @@ import kotlin.math.pow
 import kotlin.random.Random
 
 class LayoutData {
-    var radius = 15.0
+    var radius = 10.0
     var delta = Point2D(Random.nextInt().absoluteValue.toDouble() % 300, Random.nextInt().absoluteValue.toDouble() % 300)
     var appliedForce: Point2D = Point2D(0.0, 0.0)
         private set
@@ -27,7 +27,7 @@ class Vertex(
     var layoutData: LayoutData = LayoutData()
     var centrality: Double = 0.0
         set(value) {
-            layoutData.radius = 1.13.pow(value * 100)
+            layoutData.radius = 10 + 1.13.pow(value * 100)
             field = value
         }
 

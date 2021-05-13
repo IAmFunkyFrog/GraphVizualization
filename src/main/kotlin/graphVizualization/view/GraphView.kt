@@ -13,7 +13,7 @@ class GraphView(
     var name: StringProperty = SimpleStringProperty("Undefined")
 ) : View() {
 
-    var graph: Graph = Graph.ControlGraph(500, 6)
+    var graph: Graph = Graph.ControlGraph(100, 2)
     var vertices = graph.vertices().associateWith {
         VertexView(it)
     } as MutableMap
