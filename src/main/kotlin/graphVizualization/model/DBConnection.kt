@@ -10,7 +10,7 @@ class DBConnection(
     uri: String,
     username: String,
     password: String
-): Closeable {
+) : Closeable {
 
     private val driver = GraphDatabase.driver(uri, AuthTokens.basic(username, password))
     private val session = driver.session()
@@ -20,7 +20,7 @@ class DBConnection(
             try {
                 it.run("MERGE (:Graph {name: \$name})", mutableMapOf("name" to name) as Map<String, Any>?)
                 it.run(
-                    "MATCH (g:Graph {name: \$name}), (v:Vertex)-[:IN]-(g) DETACH DELETE v",
+                    "MATCH (g:Graph {name: \$name}), (v:Vertex)-[:IN]->(g) DETACH DELETE v",
                     mutableMapOf(
                         "name" to name
                     ) as Map<String, Any>?
@@ -73,12 +73,12 @@ class DBConnection(
         session.writeTransaction { tx ->
             try {
                 val vertexValues = tx.run(
-                    "MATCH (g:Graph {name: \$name}), (v:Vertex)-[:IN]-(g) RETURN v.value AS value",
+                    "MATCH (g:Graph {name: \$name}), (v:Vertex)-[:IN]-(g) RETURN v.value AS value, v.centerX AS centerX, v.centerY AS centerY, v.centrality AS centrality",
                     mutableMapOf(
                         "name" to name
                     ) as Map<String, Any>?
                 )
-                for(vertex in vertexValues) {
+                for (vertex in vertexValues) {
                     this.add(Vertex(vertex.get("value").asString()).apply {
                         layoutData.delta = Point2D(vertex.get("centerX").asDouble(), vertex.get("centerY").asDouble())
                         centrality = vertex.get("centrality").asDouble()
@@ -100,7 +100,7 @@ class DBConnection(
                         "name" to name
                     ) as Map<String, Any>?
                 )
-                for(edge in edgeValues) {
+                for (edge in edgeValues) {
                     val weight = edge.get("weight").asDouble()
                     val vertex1 = edge.get("value1").asString()
                     val vertex2 = edge.get("value2").asString()

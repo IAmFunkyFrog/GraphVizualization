@@ -17,7 +17,7 @@ class Graph(
     }
 
     fun addEdge(edge: Edge): Edge? {
-        return if(edges.any { e -> e.vertex1 == edge.vertex1 && e.vertex2 == edge.vertex2 } ||
+        return if(edge.vertex1 == edge.vertex2 || edges.any { e -> e.vertex1 == edge.vertex1 && e.vertex2 == edge.vertex2 } ||
             edges.any { e -> e.vertex1 == edge.vertex2 && e.vertex2 == edge.vertex1 }) null
         else edge.also {
             edges.add(edge)
