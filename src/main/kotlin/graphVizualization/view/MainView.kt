@@ -5,6 +5,9 @@ import graphVizualization.controller.SQLiteSaveLoadController
 import graphVizualization.styles.TopBarStyle
 import javafx.scene.Parent
 import javafx.scene.control.*
+import javafx.scene.text.Font
+import javafx.scene.text.Font.font
+import javafx.scene.text.FontWeight
 import tornadofx.*
 
 class MainView() : View() {
@@ -18,7 +21,7 @@ class MainView() : View() {
 
     private val forceAtlas2Inputs = listOf(
         Pair("Attraction algorithm", ComboBox<String>().apply {
-            for(name in algorithms.keys) items.add(name)
+            for (name in algorithms.keys) items.add(name)
             selectionModel.selectedItemProperty().addListener { _, _, newValue ->
                 algorithms[newValue]?.let { it() }
             }
@@ -109,6 +112,9 @@ class MainView() : View() {
         }
         right = scrollpane {
             vbox {
+                label("Centrality settings").apply {
+                    font = Font.font("Tahoma", FontWeight.BOLD, 15.0)
+                }
                 button("Start centrality") {
                     action {
                         centralityController.toggle()
@@ -117,7 +123,7 @@ class MainView() : View() {
                 }
                 //TODO сделать нормально
                 NumberField(1.13) {
-                    for((v, vView) in graphView.vertices) {
+                    for ((v, vView) in graphView.vertices) {
                         v.centralityScale = it
                         vView.radius = v.layoutData.radius
                     }
@@ -127,14 +133,19 @@ class MainView() : View() {
                     }
                     add(it)
                 }
-                button("Start") {
-                    action {
-                        graphView.controller.startForceAtlas2()
-                    }
+
+                label("ForceAtlas2 settings").apply {
+                    font = Font.font("Tahoma", FontWeight.BOLD, 15.0)
                 }
-                button("Cancel") {
+                button("Start ForceAtlas2") {
                     action {
-                        graphView.controller.cancelForceAtlas2()
+                        if (!graphView.controller.forceAtlas2Running) {
+                            text = "Stop ForceAtlas2"
+                            graphView.controller.startForceAtlas2()
+                        } else {
+                            text = "Start ForceAtlas2"
+                            graphView.controller.cancelForceAtlas2()
+                        }
                     }
                 }
                 for ((desc, input) in forceAtlas2Inputs) {

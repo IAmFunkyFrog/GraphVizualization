@@ -27,7 +27,7 @@ class Vertex(
     var layoutData: LayoutData = LayoutData()
     var centralityScale = 1.13
         set(value) {
-            centrality = centrality
+            layoutData.radius = 10 + value.pow(centrality * 100)
             field = value
         }
     var centrality: Double = 0.0
