@@ -21,7 +21,7 @@ class CentralityController(private val graphView: GraphView) : Controller() {
             } success {
                 harmonicCentrality.updateCentrality()
                 graphView.vertices.forEach { (vertex, vertexView) ->
-                    vertexView.radius = vertex.layoutData.radius // TODO normalize centrality
+                    vertexView.radius = vertex.layoutData.radius
                 }
             }
         }

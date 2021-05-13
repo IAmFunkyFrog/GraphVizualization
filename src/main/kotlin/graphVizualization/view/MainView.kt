@@ -115,10 +115,10 @@ class MainView() : View() {
                 label("Centrality settings").apply {
                     font = Font.font("Tahoma", FontWeight.BOLD, 15.0)
                 }
-                button("Start centrality") {
+                button("Calculate centrality") {
                     action {
                         centralityController.toggle()
-                        text = if (centralityController.toggled) "Stop centrality" else "Start centrality"
+                        text = if (centralityController.toggled) "Calculated centrality" else "Calculate centrality"
                     }
                 }
                 //TODO сделать нормально

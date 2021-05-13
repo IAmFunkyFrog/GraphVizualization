@@ -35,7 +35,7 @@ class GraphController(
     fun startForceAtlas2() {
         cancelForceAtlas2()
         forceAtlas2Running = true
-        forceAtlas2.reset()
+        forceAtlas2.reset(graphView.graph)
         forceAtlas2Service = ForceAtlas2Service()
         forceAtlas2Service.start()
     }
