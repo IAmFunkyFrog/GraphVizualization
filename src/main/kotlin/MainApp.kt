@@ -8,6 +8,7 @@ class MainApp: App(MainView::class) {
         with(stage) {
             width = 640.0
             height = 640.0
+            stage.isMaximized = true
         }
         super.start(stage)
     }
