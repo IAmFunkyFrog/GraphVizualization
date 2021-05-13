@@ -16,6 +16,8 @@ import javafx.scene.input.*
 import javafx.util.Duration
 import tornadofx.Controller
 import tornadofx.add
+import kotlin.math.absoluteValue
+import kotlin.random.Random
 
 class GraphController(
     private val graphView: GraphView
@@ -38,6 +40,14 @@ class GraphController(
         forceAtlas2.reset(graphView.graph)
         forceAtlas2Service = ForceAtlas2Service()
         forceAtlas2Service.start()
+    }
+
+    fun shuffle() {
+        for((v, vView) in graphView.vertices) {
+            v.layoutData.delta = Point2D(Random.nextInt().absoluteValue.toDouble() % 100, Random.nextInt().absoluteValue.toDouble() % 100)
+            vView.centerX = v.layoutData.delta.x
+            vView.centerY = v.layoutData.delta.y
+        }
     }
 
     fun setLinLogAttraction() {

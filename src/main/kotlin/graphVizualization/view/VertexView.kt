@@ -9,9 +9,8 @@ import javafx.scene.Parent
 import javafx.scene.control.TextField
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
-import kotlin.random.Random
+import javafx.scene.text.Font
 import tornadofx.*
-import kotlin.math.absoluteValue
 
 class VertexView(
     val vertex: Vertex
@@ -21,19 +20,22 @@ class VertexView(
 
     var visibleText: BooleanProperty = SimpleBooleanProperty(false)
 
-    init {
-        radius = vertex.layoutData.radius
-        centerX = vertex.layoutData.delta.x
-        centerY = vertex.layoutData.delta.y
-        fill = Color.RED
-    }
-
     val label = text {
         text = vertex.value
         fill = Color.BLUE
         xProperty().bind(centerXProperty() + radiusProperty())
         yProperty().bind(centerYProperty() - radiusProperty())
         visibleWhen(visibleText)
+    }
+
+    init {
+        radius = vertex.layoutData.radius
+        radiusProperty().addListener { _, _, newValue ->
+            label.font = Font(newValue.toDouble())
+        }
+        centerX = vertex.layoutData.delta.x
+        centerY = vertex.layoutData.delta.y
+        fill = Color.RED
     }
 
     fun applyDisplacement(displacement: Point2D) {

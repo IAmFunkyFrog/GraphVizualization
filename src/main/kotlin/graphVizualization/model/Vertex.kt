@@ -6,7 +6,7 @@ import kotlin.random.Random
 
 class LayoutData {
     var radius = 10.0
-    var delta = Point2D(Random.nextInt().absoluteValue.toDouble() % 300, Random.nextInt().absoluteValue.toDouble() % 300)
+    var delta = Point2D(Random.nextInt().absoluteValue.toDouble() % 100, Random.nextInt().absoluteValue.toDouble() % 100)
     var appliedForce: Point2D = Point2D(0.0, 0.0)
         private set
     var oldAppliedForce: Point2D = Point2D(0.0, 0.0)

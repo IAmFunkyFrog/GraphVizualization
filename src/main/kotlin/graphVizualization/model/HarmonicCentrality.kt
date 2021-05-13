@@ -10,8 +10,8 @@ class HarmonicCentrality(graph: Graph) {
     init {
         val vertexToIndexMap: Map<Vertex, Int> = graph.vertices().mapIndexed { i, v -> v to i }.toMap()
         graph.edges().forEach {
-            matrix[vertexToIndexMap[it.vertex1]!!][vertexToIndexMap[it.vertex2]!!] = 1.0
-            matrix[vertexToIndexMap[it.vertex2]!!][vertexToIndexMap[it.vertex1]!!] = 1.0
+            matrix[vertexToIndexMap[it.vertex1]!!][vertexToIndexMap[it.vertex2]!!] = it.weight
+            matrix[vertexToIndexMap[it.vertex2]!!][vertexToIndexMap[it.vertex1]!!] = it.weight
             //matrix[vertexToIndexMap[it.vertex1]!!][vertexToIndexMap[it.vertex2]!!] = 1.0 / weight
         }
         matrix.indices.forEach { i ->
