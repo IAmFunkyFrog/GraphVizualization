@@ -1,6 +1,9 @@
 package graphVizualization.model
 
 import Vertex
+import java.lang.Exception
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
 
 class HarmonicCentrality(graph: Graph) {
     private val vertexCentralities = graph.vertices().map { VertexCentrality(it, 0.0) }
@@ -45,6 +48,7 @@ class HarmonicCentrality(graph: Graph) {
             }
             return minIndex
         }
+
         vertexCentralities.indices.forEach { k ->
             val used = BooleanArray(vertexCentralities.size) { false }
             val dist = DoubleArray(vertexCentralities.size) { Double.POSITIVE_INFINITY }

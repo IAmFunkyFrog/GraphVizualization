@@ -29,6 +29,7 @@ class CentralityController(private val graphView: GraphView) : Controller() {
                 graphView.vertices.forEach { (vertex, vertexView) ->
                     vertexView.radius = vertex.layoutData.radius
                 }
+                task = null
             }
         }
     }
