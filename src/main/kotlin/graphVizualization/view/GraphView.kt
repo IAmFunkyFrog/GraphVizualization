@@ -13,7 +13,7 @@ class GraphView(
     var name: StringProperty = SimpleStringProperty("Undefined")
 ) : View() {
 
-    var graph: Graph = Graph.ControlGraph(4000, 3)
+    var graph: Graph = Graph.EmptyGraph()
     var vertices = graph.vertices().associateWith {
         VertexView(it)
     } as MutableMap
@@ -32,10 +32,8 @@ class GraphView(
         }
         vertices.values.forEach { v ->
             add(v)
-            setHandlersOnVertex(v)
-        }
-        vertices.values.forEach { v ->
             add(v.label)
+            setHandlersOnVertex(v)
         }
     }
 
