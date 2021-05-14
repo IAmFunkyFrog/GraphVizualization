@@ -49,7 +49,10 @@ class VertexView(
         override val root: Parent = vbox {
             TextField(vertex.value).apply {
                 textProperty().addListener { _, _, newValue ->
-                    if(newValue != "") vertex.value = newValue
+                    if(newValue != "") {
+                        vertex.value = newValue
+                        label.text = newValue
+                    }
                 }
             }.also {
                 label("Value") {
