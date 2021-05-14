@@ -5,6 +5,9 @@ import graphVizualization.controller.SQLiteSaveLoadController
 import graphVizualization.styles.TopBarStyle
 import javafx.scene.Parent
 import javafx.scene.control.*
+import javafx.scene.text.Font
+import javafx.scene.text.Font.font
+import javafx.scene.text.FontWeight
 import tornadofx.*
 
 class MainView() : View() {
@@ -18,7 +21,7 @@ class MainView() : View() {
 
     private val forceAtlas2Inputs = listOf(
         Pair("Attraction algorithm", ComboBox<String>().apply {
-            for(name in algorithms.keys) items.add(name)
+            for (name in algorithms.keys) items.add(name)
             selectionModel.selectedItemProperty().addListener { _, _, newValue ->
                 algorithms[newValue]?.let { it() }
             }
@@ -109,20 +112,56 @@ class MainView() : View() {
         }
         right = scrollpane {
             vbox {
-                button("Start centrality") {
-                    action {
-                        centralityController.toggle()
-                        text = if (centralityController.toggled) "Stop centrality" else "Start centrality"
+                label("Centrality settings").apply {
+                    font = Font.font("Tahoma", FontWeight.BOLD, 15.0)
+                }
+                ProgressBar().also {
+                    it.visibleProperty().bind(centralityController.inProgress)
+                    add(it)
+                    button("Calculate centrality") {
+                        action {
+                            centralityController.toggle()
+                        }
                     }
                 }
-                button("Start") {
+                button("Reset centrality to default") {
                     action {
-                        graphView.controller.startForceAtlas2()
+                        for((v, vView) in graphView.vertices) {
+                            v.centrality = 0.0
+                            vView.radius = v.layoutData.radius
+                        }
                     }
                 }
-                button("Cancel") {
+                //TODO сделать нормально
+                NumberField(1.13) {
+                    for ((v, vView) in graphView.vertices) {
+                        v.centralityScale = it
+                        vView.radius = v.layoutData.radius
+                    }
+                }.also {
+                    label("centralityScale") {
+                        labelFor = it
+                    }
+                    add(it)
+                }
+
+                label("ForceAtlas2 settings").apply {
+                    font = Font.font("Tahoma", FontWeight.BOLD, 15.0)
+                }
+                button("Start ForceAtlas2") {
                     action {
-                        graphView.controller.cancelForceAtlas2()
+                        if (!graphView.controller.forceAtlas2Running) {
+                            text = "Stop ForceAtlas2"
+                            graphView.controller.startForceAtlas2()
+                        } else {
+                            text = "Start ForceAtlas2"
+                            graphView.controller.cancelForceAtlas2()
+                        }
+                    }
+                }
+                button("Shuffle") {
+                    action {
+                        graphView.controller.shuffle()
                     }
                 }
                 for ((desc, input) in forceAtlas2Inputs) {

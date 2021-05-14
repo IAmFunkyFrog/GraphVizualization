@@ -12,7 +12,7 @@ val Vertex.swing
         .magnitude()
 
 class ForceAtlas2(
-    private val graph: Graph,
+    private var graph: Graph,
 ) {
     var vertices = graph.vertices.toList()
     var edges = graph.edges.toList()
@@ -106,7 +106,8 @@ class ForceAtlas2(
         }
     }
 
-    fun reset() {
+    fun reset(graph: Graph) {
+        this.graph = graph
         vertices = graph.vertices.toList()
         edges = graph.edges.toList()
     }

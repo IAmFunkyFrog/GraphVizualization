@@ -25,6 +25,7 @@ class EdgeView(
     ) : Fragment() {
         override val root: Parent = vbox {
             NumberField(edge.weight) {
+                if(it < 1.0) throw Exception("Weight must be > 1.0")
                 edge.weight = it
             }.also {
                 label("Weight") {

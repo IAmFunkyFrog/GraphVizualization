@@ -14,7 +14,7 @@ class NumberField(
             }
             catch (e: Exception) {
                 //TODO добавить нормальное оповещение или еще что нибудь
-                println("parse error in forceAtlas2Params")
+                println(e.message)
                 text = oldValue
             }
         }

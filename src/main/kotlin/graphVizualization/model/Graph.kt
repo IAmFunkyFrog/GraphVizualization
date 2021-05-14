@@ -64,7 +64,23 @@ class Graph(
             for(i in 1..edgesCount) {
                 val v1 = Random.nextInt().absoluteValue % vertices.size
                 val v2 = Random.nextInt().absoluteValue % vertices.size
-                graph.addEdge(Edge(vertices[v1], vertices[v2], Random.nextDouble()))
+                graph.addEdge(Edge(vertices[v1], vertices[v2], 1.0))
+            }
+
+            return graph
+        }
+
+        fun AllToOneGraph(n: Int): Graph {
+            val graph = Graph(ArrayList(), ArrayList())
+
+            for(i in 1..n) graph.vertices.add(Vertex(i.toString()))
+
+            val edgesCount = n
+            val vertices = graph.vertices()
+            for(i in 1..(edgesCount-1)) {
+                val v1 = 0
+                val v2 = i
+                graph.addEdge(Edge(vertices[v1], vertices[v2], 1.0))
             }
 
             return graph
@@ -73,13 +89,39 @@ class Graph(
         fun FullGraph(): Graph {
             val graph = Graph(ArrayList(), ArrayList())
 
-            for(i in 1..250) graph.addVertex(Vertex(i.toString()))
+            for(i in 1..200) graph.addVertex(Vertex(i.toString()))
 
             val vertices = graph.vertices()
-            for(i in 0..249) {
-                for(j in i+1..249) {
+            for(i in 0..199) {
+                for(j in i+1..199) {
                     graph.addEdge(Edge(vertices[i], vertices[j], 1.0))
                 }
+            }
+
+            return graph
+        }
+
+        fun SubCommunityGraph(n: Int, pCount: Int, subPCount: Int): Graph {
+            val graph = Graph(ArrayList(), ArrayList())
+
+            for(i in 1..n) graph.vertices.add(Vertex(i.toString()))
+
+            val vertices = graph.vertices()
+            val part = vertices.size / pCount
+            val edgesCount = n
+            for(i in 1..edgesCount) {
+                val v1 = Random.nextInt().absoluteValue % part
+                val v2 = Random.nextInt().absoluteValue % part
+                for(j in 0 until pCount) graph.addEdge(Edge(vertices[v1 + part * j], vertices[v2 + part * j], 1.0))
+            }
+
+            for(j in 0 until pCount - 1) graph.addEdge(Edge(vertices[part * j], vertices[part * (j + 1)], 1.0))
+
+            val subPart = part * subPCount
+            for(i in 1..((edgesCount / pCount) * subPCount)) {
+                val v1 = Random.nextInt().absoluteValue % subPart
+                val v2 = Random.nextInt().absoluteValue % subPart
+                graph.addEdge(Edge(vertices[v1], vertices[v2], 1.0))
             }
 
             return graph
