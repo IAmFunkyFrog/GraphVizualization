@@ -23,7 +23,7 @@ class LayoutData {
 
 class Vertex(
     var value: String
-) {
+): Comparable<Vertex> {
     var layoutData: LayoutData = LayoutData()
     var centralityScale = 1.13
         set(value) {
@@ -45,5 +45,9 @@ class Vertex(
 
     fun onEdgeDeleted() {
         degree--
+    }
+
+    override fun compareTo(other: Vertex): Int {
+        return value.compareTo(other.value)
     }
 }

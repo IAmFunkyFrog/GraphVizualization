@@ -14,8 +14,8 @@ val Vertex.swing
 class ForceAtlas2(
     private var graph: Graph,
 ) {
-    var vertices = graph.vertices.toList()
-    var edges = graph.edges.toList()
+    var vertices = graph.vertices()
+    var edges = graph.edges()
     
     var attraction: Force = Force.Factory.LinLogAttraction()
     var repulsion: Force = Force.Factory.DistanceRepulsion()
@@ -108,8 +108,8 @@ class ForceAtlas2(
 
     fun reset(graph: Graph) {
         this.graph = graph
-        vertices = graph.vertices.toList()
-        edges = graph.edges.toList()
+        vertices = graph.vertices()
+        edges = graph.edges()
     }
 
     private fun checkOverlapping(v1: Vertex, v2: Vertex): Boolean {
