@@ -42,7 +42,7 @@ class GraphController(
         forceAtlas2Service.start()
     }
 
-    fun shuffle() {
+    fun reset() {
         for((v, vView) in graphView.vertices) {
             v.layoutData.delta = Point2D(Random.nextInt().absoluteValue.toDouble() % 100, Random.nextInt().absoluteValue.toDouble() % 100)
             vView.centerX = v.layoutData.delta.x
@@ -68,7 +68,7 @@ class GraphController(
         if (graphView.root.scaleY + delta >= 0) graphView.root.scaleY += delta
     }
 
-    fun onMousePressed(e: MouseEvent, graphView: GraphView) {
+    fun onMousePressed(e: MouseEvent) {
         if (!e.isControlDown) return
 
         oldMousePos = Point2D(e.x, e.y)
@@ -84,18 +84,6 @@ class GraphController(
         oldMousePos = mousePos
     }
 
-    var pressedVertex: VertexView? = null
-
-    fun onPressVertex(e: MouseEvent, vertexView: VertexView) {
-        if (!e.isSecondaryButtonDown) {
-            pressedVertex = null
-            return
-        }
-
-        if (pressedVertex == null) pressedVertex = vertexView
-        else pressedVertex?.let { createEdge(it, vertexView) }
-    }
-
     fun createVertex(vertexValue: String) {
         val newVertex = Vertex(vertexValue)
         if (graphView.graph.addVertex(newVertex) != null) {
@@ -109,13 +97,11 @@ class GraphController(
 
     fun createEdge(vertexView1: VertexView, vertexView2: VertexView) {
         if (vertexView1 == vertexView2) return
-        //TODO добавить возможность создавать ребра с определенным весом или хотя бы изменять вес ребра
         val newEdge = Edge(vertexView1.vertex, vertexView2.vertex, 1.0)
         if (graphView.graph.addEdge(newEdge) != null) {
             graphView.edges[newEdge] = EdgeView(newEdge, vertexView1, vertexView2).also {
                 graphView.root.add(it)
                 graphView.setHandlersOnEdge(it)
-                //TODO разобраться с костылем
                 for ((_, vView) in graphView.vertices) vView.toFront()
             }
         }

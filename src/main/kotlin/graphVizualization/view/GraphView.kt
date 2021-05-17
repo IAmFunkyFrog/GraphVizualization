@@ -45,7 +45,9 @@ class GraphView(
                     .filter { e -> e.vertexView1 == vertexView || e.vertexView2 == vertexView }
                     .forEach { e -> controller.removeEdge(e) }
             })
-            else controller.onPressVertex(it, vertexView)
+            else vertexView.controller.onPress(it, vertexView) { v1, v2 ->
+                controller.createEdge(v1, v2)
+            }
         }
         vertexView.setOnMouseDragged {
             vertexView.controller.onDrag(it, vertexView)
@@ -77,7 +79,6 @@ class GraphView(
             val vertexView2 = vertices[it.vertex2] ?: throw IllegalArgumentException()
             EdgeView(it, vertexView1, vertexView2)
         } as MutableMap
-        //TODO подумать как пофиксить кастыль
         root.children.clear()
         edges.values.forEach { e ->
             root.add(e)

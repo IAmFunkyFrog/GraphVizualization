@@ -20,11 +20,12 @@ class Neo4jSaveFragment(
             textProperty().bindBidirectional(name)
         }
         label {
+            id = "status_lbl"
             this.textProperty().bind(status)
         }
         button("Save") {
+            id = "save_btn"
             action {
-                //TODO подумать над добавлением логера
                 status.value = "Saving"
                 runAsync {
                     controller.saveGraph(graph, name.value)

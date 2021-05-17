@@ -2,14 +2,14 @@ package graphVizualization.view
 
 import graphVizualization.controller.Neo4jSaveLoadController
 import javafx.beans.property.SimpleStringProperty
+import javafx.concurrent.Task
 import javafx.scene.Parent
 import javafx.scene.control.ListView
-import javafx.scene.control.SingleSelectionModel
 import tornadofx.*
 
 class Neo4jLoadFragment(
     graphView: GraphView
-): Fragment() {
+) : Fragment() {
     private val controller = Neo4jSaveLoadController()
     private val graphsListView = ListView<String>()
 
@@ -20,16 +20,18 @@ class Neo4jLoadFragment(
             runAsync {
                 controller.getAllGraphNames()
             } ui {
-                for(graph in it) {
+                for (graph in it) {
                     graphsListView.items.add(graph)
                 }
                 graphsListView
             }
         }
         label {
+            id = "status_lbl"
             textProperty().bind(status)
         }
         button("Select") {
+            id = "select_btn"
             action {
                 graphsListView.selectionModel.selectedItem?.let { name ->
                     status.value = "Loading"

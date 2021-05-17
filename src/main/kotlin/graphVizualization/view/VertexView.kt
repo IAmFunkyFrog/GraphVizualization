@@ -42,14 +42,17 @@ class VertexView(
         centerX += displacement.x
         centerY += displacement.y
     }
-    //TODO подумать над дублирующимся кодом
+
     inner class VertexEditor(
         onDelete: () -> Unit
     ) : Fragment() {
         override val root: Parent = vbox {
             TextField(vertex.value).apply {
                 textProperty().addListener { _, _, newValue ->
-                    if(newValue != "") vertex.value = newValue
+                    if(newValue != "") {
+                        vertex.value = newValue
+                        label.text = newValue
+                    }
                 }
             }.also {
                 label("Value") {

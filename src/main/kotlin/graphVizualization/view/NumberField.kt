@@ -13,7 +13,6 @@ class NumberField(
                 onChange(newValue.toDouble())
             }
             catch (e: Exception) {
-                //TODO добавить нормальное оповещение или еще что нибудь
                 println(e.message)
                 text = oldValue
             }
