@@ -6,9 +6,9 @@ import graphVizualization.styles.TopBarStyle
 import javafx.scene.Parent
 import javafx.scene.control.*
 import javafx.scene.text.Font
-import javafx.scene.text.Font.font
 import javafx.scene.text.FontWeight
 import tornadofx.*
+import kotlin.math.pow
 
 class MainView() : View() {
     private val graphView = GraphView()
@@ -62,6 +62,14 @@ class MainView() : View() {
         })
     )
 
+    private val harmonicCentralityInputs = listOf(
+        Pair("centralityScale", NumberField(0.0) {
+            for ((v, vView) in graphView.vertices) {
+                vView.radius = v.layoutData.radius + it.pow(v.centrality)
+            }
+        })
+    )
+
     override val root: Parent = borderpane {
         titleProperty.bind(graphView.name)
 
@@ -72,7 +80,7 @@ class MainView() : View() {
                 graphView.controller.onScroll(it, graphView)
             }
             this.setOnMousePressed {
-                graphView.controller.onMousePressed(it, graphView)
+                graphView.controller.onMousePressed(it)
             }
             this.setOnMouseDragged {
                 graphView.controller.onMouseDragged(it, graphView)
@@ -132,19 +140,12 @@ class MainView() : View() {
                         }
                     }
                 }
-                //TODO сделать нормально
-                NumberField(1.13) {
-                    for ((v, vView) in graphView.vertices) {
-                        v.centralityScale = it
-                        vView.radius = v.layoutData.radius
+                for ((desc, input) in harmonicCentralityInputs) {
+                    label(desc) {
+                        labelFor = input
                     }
-                }.also {
-                    label("centralityScale") {
-                        labelFor = it
-                    }
-                    add(it)
+                    add(input)
                 }
-
                 label("ForceAtlas2 settings").apply {
                     font = Font.font("Tahoma", FontWeight.BOLD, 15.0)
                 }
@@ -159,9 +160,9 @@ class MainView() : View() {
                         }
                     }
                 }
-                button("Shuffle") {
+                button("Reset") {
                     action {
-                        graphView.controller.shuffle()
+                        graphView.controller.reset()
                     }
                 }
                 for ((desc, input) in forceAtlas2Inputs) {

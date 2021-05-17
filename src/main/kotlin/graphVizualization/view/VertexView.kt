@@ -42,7 +42,7 @@ class VertexView(
         centerX += displacement.x
         centerY += displacement.y
     }
-    //TODO подумать над дублирующимся кодом
+
     inner class VertexEditor(
         onDelete: () -> Unit
     ) : Fragment() {

@@ -22,4 +22,18 @@ class VertexController: Controller() {
     fun onMouseExited(vertexView: VertexView) {
         vertexView.visibleText.value = false
     }
+
+    fun onPress(e: MouseEvent, vertexView: VertexView, createEdge: (VertexView, VertexView) -> Unit) {
+        if (!e.isSecondaryButtonDown) {
+            pressedVertex = null
+            return
+        }
+
+        if (pressedVertex == null) pressedVertex = vertexView
+        else pressedVertex?.let { createEdge(it, vertexView) }
+    }
+
+    companion object {
+        var pressedVertex: VertexView? = null
+    }
 }

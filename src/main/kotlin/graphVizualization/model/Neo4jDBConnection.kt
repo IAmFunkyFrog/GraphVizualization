@@ -6,7 +6,7 @@ import org.neo4j.driver.AuthTokens
 import org.neo4j.driver.GraphDatabase
 import java.io.Closeable
 
-class DBConnection(
+class Neo4jDBConnection(
     uri: String,
     username: String,
     password: String

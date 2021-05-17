@@ -1,5 +1,4 @@
 import graphVizualization.controller.Neo4jSaveLoadController
-import graphVizualization.model.DBConnection
 import graphVizualization.model.Edge
 import graphVizualization.model.Graph
 import graphVizualization.view.GraphView
@@ -11,7 +10,6 @@ import javafx.scene.control.ListView
 import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertTimeoutPreemptively

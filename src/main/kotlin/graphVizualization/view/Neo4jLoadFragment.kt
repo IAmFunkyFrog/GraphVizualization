@@ -2,6 +2,7 @@ package graphVizualization.view
 
 import graphVizualization.controller.Neo4jSaveLoadController
 import javafx.beans.property.SimpleStringProperty
+import javafx.concurrent.Task
 import javafx.scene.Parent
 import javafx.scene.control.ListView
 import tornadofx.*

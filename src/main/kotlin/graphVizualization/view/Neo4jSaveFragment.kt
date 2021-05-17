@@ -26,7 +26,6 @@ class Neo4jSaveFragment(
         button("Save") {
             id = "save_btn"
             action {
-                //TODO подумать над добавлением логера
                 status.value = "Saving"
                 runAsync {
                     controller.saveGraph(graph, name.value)
