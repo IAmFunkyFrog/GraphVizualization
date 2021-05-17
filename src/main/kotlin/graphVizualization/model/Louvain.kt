@@ -98,7 +98,7 @@ class Louvain(val graph: Graph) {
     private fun renumberCommunities() {
         val oldCommunityIndicesToNew = IntArray(currentPartition.size) { -1 }
         for (community in currentPartition) {
-            oldCommunityIndicesToNew[community]++
+            oldCommunityIndicesToNew[community] = 0
         }
         var numberOfCommunities = 0
         for (i in oldCommunityIndicesToNew.indices) {
@@ -129,10 +129,9 @@ class Louvain(val graph: Graph) {
 
     private fun rebuildGraph() {
         renumberCommunities()
-        val newVertices: MutableList<Vertex> = mutableListOf()
+        val newVertices = Array(numberOfCommunities) { Vertex("") }
         for (vertexIndex in currentVertices.indices) {
-            if (currentPartition[vertexIndex] == newVertices.size)
-                newVertices.add(currentVertices[vertexIndex])
+            newVertices[currentPartition[vertexIndex]] = currentVertices[vertexIndex]
         }
         verticesSelfLoops = DoubleArray(newVertices.size) { innerCommunityWeight[it] }
         verticesDegree = DoubleArray(newVertices.size) { totalCommunityWeight[it] }
@@ -154,7 +153,7 @@ class Louvain(val graph: Graph) {
         }
         indexMap = newVertices.indices.associateBy { newVertices[it] }
         currentPartition = IntArray(newVertices.size) { it }
-        currentVertices = newVertices
+        currentVertices = newVertices.toList()
         adjacencyMap = newAdjacencyMap
     }
 
