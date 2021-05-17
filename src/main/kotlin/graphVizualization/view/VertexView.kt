@@ -35,7 +35,8 @@ class VertexView(
         }
         centerX = vertex.layoutData.delta.x
         centerY = vertex.layoutData.delta.y
-        fill = Color.RED
+        fill = vertex.layoutData.fill
+        stroke = Color.BLACK
     }
 
     fun applyDisplacement(displacement: Point2D) {
