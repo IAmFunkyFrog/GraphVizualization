@@ -5,11 +5,7 @@ import tornadofx.launch
 
 class MainApp: App(MainView::class) {
     override fun start(stage: Stage) {
-        with(stage) {
-            width = 640.0
-            height = 640.0
-            stage.isMaximized = true
-        }
+        stage.isMaximized = true
         super.start(stage)
     }
 }
