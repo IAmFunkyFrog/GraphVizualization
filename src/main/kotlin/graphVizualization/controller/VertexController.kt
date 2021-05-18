@@ -30,7 +30,10 @@ class VertexController: Controller() {
         }
 
         if (pressedVertex == null) pressedVertex = vertexView
-        else pressedVertex?.let { createEdge(it, vertexView) }
+        else pressedVertex?.let {
+            pressedVertex = null
+            createEdge(it, vertexView)
+        }
     }
 
     companion object {

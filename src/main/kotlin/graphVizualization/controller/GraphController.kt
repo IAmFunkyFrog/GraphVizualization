@@ -122,7 +122,7 @@ class GraphController(
     private inner class ForceAtlas2Service : ScheduledService<Unit>() {
 
         init {
-            period = Duration(10.0)
+            //period = Duration(10.0)
             onSucceeded = EventHandler {
                 for ((v, vView) in graphView.vertices) {
                     vView.centerX = v.layoutData.delta.x

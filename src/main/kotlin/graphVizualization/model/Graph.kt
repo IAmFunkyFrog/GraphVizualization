@@ -10,7 +10,7 @@ class Graph(
 ) {
 
     fun addVertex(vertex: Vertex): Vertex? {
-        return if(vertices.any { v -> v == vertex }) null
+        return if(vertices.any { v -> v == vertex}) null
         else vertex.also {
             vertices.add(vertex)
         }

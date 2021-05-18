@@ -25,17 +25,18 @@ class Neo4jDBConnection(
                 ) as Map<String, Any>?
             )
             for (vertex in graph.vertices()) it.run(
-                "MATCH (g:Graph {name: \$name}) MERGE (v:Vertex {value: \$value, centerX: \$centerX, centerY: \$centerY, centrality: \$centrality})-[:IN]->(g)",
+                "MATCH (g:Graph {name: \$name}) MERGE (v:Vertex {value: \$value, centerX: \$centerX, centerY: \$centerY, centrality: \$centrality, community: \$community})-[:IN]->(g)",
                 mutableMapOf(
                     "name" to name,
                     "value" to vertex.value,
                     "centerX" to vertex.layoutData.delta.x,
                     "centerY" to vertex.layoutData.delta.y,
-                    "centrality" to vertex.centrality
+                    "centrality" to vertex.centrality,
+                    "community" to vertex.community
                 ) as Map<String, Any>?
             )
             for (edge in graph.edges()) it.run(
-                "MATCH (g:Graph {name: \$name}) MERGE (v1:Vertex {value: \$value1, centerX: \$centerX1, centerY: \$centerY1, centrality: \$centrality1})-[:IN]->(g) MERGE (v2:Vertex {value: \$value2, centerX: \$centerX2, centerY: \$centerY2, centrality: \$centrality2})-[:IN]->(g) MERGE (v1)-[:CONNECTED {weight: \$weight}]-(v2)",
+                "MATCH (g:Graph {name: \$name}) MERGE (v1:Vertex {value: \$value1, centerX: \$centerX1, centerY: \$centerY1, centrality: \$centrality1, community: \$community1})-[:IN]->(g) MERGE (v2:Vertex {value: \$value2, centerX: \$centerX2, centerY: \$centerY2, centrality: \$centrality2, community: \$community2})-[:IN]->(g) MERGE (v1)-[:CONNECTED {weight: \$weight}]-(v2)",
                 mutableMapOf(
                     "name" to name,
                     "value1" to edge.vertex1.value,
@@ -46,6 +47,8 @@ class Neo4jDBConnection(
                     "centerY2" to edge.vertex2.layoutData.delta.y,
                     "centrality1" to edge.vertex1.centrality,
                     "centrality2" to edge.vertex2.centrality,
+                    "community1" to edge.vertex1.community,
+                    "community2" to edge.vertex2.community,
                     "weight" to edge.weight
                 ) as Map<String, Any>?
             )
@@ -62,7 +65,7 @@ class Neo4jDBConnection(
     fun getVerticesByGraphName(name: String) = mutableListOf<Vertex>().apply {
         session.writeTransaction { tx ->
             val vertexValues = tx.run(
-                "MATCH (g:Graph {name: \$name}), (v:Vertex)-[:IN]-(g) RETURN v.value AS value, v.centerX AS centerX, v.centerY AS centerY, v.centrality AS centrality",
+                "MATCH (g:Graph {name: \$name}), (v:Vertex)-[:IN]-(g) RETURN v.value AS value, v.centerX AS centerX, v.centerY AS centerY, v.centrality AS centrality, v.community AS community",
                 mutableMapOf(
                     "name" to name
                 ) as Map<String, Any>?
@@ -71,6 +74,7 @@ class Neo4jDBConnection(
                 this.add(Vertex(vertex.get("value").asString()).apply {
                     layoutData.delta = Point2D(vertex.get("centerX").asDouble(), vertex.get("centerY").asDouble())
                     centrality = vertex.get("centrality").asDouble()
+                    community = vertex.get("community").asDouble().toInt()
                 })
             }
         }

@@ -3,7 +3,7 @@ package graphVizualization.model
 import Vertex
 
 class Louvain(val graph: Graph) {
-    private var adjacencyMap: Map<Vertex, MutableMap<Vertex, Edge> > = graph.vertices.associateWith { mutableMapOf() }
+    private var adjacencyMap: Map<Vertex, MutableMap<Vertex, Edge> > = graph.vertices().associateWith { mutableMapOf() }
     private var vertices: List<Vertex> = graph.vertices().toList()
     private var currentVertices: List<Vertex>
     private var indexMap: Map<Vertex, Int>
@@ -15,7 +15,7 @@ class Louvain(val graph: Graph) {
     private var innerCommunityWeight: DoubleArray
     private var verticesDegree: DoubleArray
     private var verticesSelfLoops: DoubleArray
-    private var totalGraphWeight: Double = graph.edges.sumOf { it.weight }
+    private var totalGraphWeight: Double = graph.edges().sumOf { it.weight }
     private var numberOfCommunities = vertices.size
 
     init {
@@ -23,9 +23,9 @@ class Louvain(val graph: Graph) {
         currentVertices = vertices
         verticesDegree = DoubleArray(vertices.size) { 0.0 }
         verticesSelfLoops = DoubleArray(vertices.size) { 0.0 }
-        totalGraphWeight = graph.edges.sumOf { it.weight }
+        totalGraphWeight = graph.edges().sumOf { it.weight }
         numberOfCommunities = vertices.size
-        for (edge in graph.edges) {
+        for (edge in graph.edges()) {
             verticesDegree[indexMap[edge.vertex1]!!] += edge.weight
             if (edge.vertex1 != edge.vertex2) verticesDegree[indexMap[edge.vertex2]!!] += edge.weight
             adjacencyMap[edge.vertex1]!![edge.vertex2] = Edge(edge.vertex1, edge.vertex2, edge.weight +
