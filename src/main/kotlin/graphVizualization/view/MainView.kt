@@ -1,6 +1,7 @@
 package graphVizualization.view
 
 import graphVizualization.controller.CentralityController
+import graphVizualization.controller.LouvainController
 import graphVizualization.controller.SQLiteSaveLoadController
 import graphVizualization.styles.TopBarStyle
 import javafx.scene.Parent
@@ -13,6 +14,7 @@ import kotlin.math.pow
 class MainView() : View() {
     private val graphView = GraphView()
     private val centralityController = CentralityController(graphView)
+    private val louvainController = LouvainController(graphView)
     private val sqliteSaveLoadController = SQLiteSaveLoadController(graphView)
     private val algorithms = mapOf(
         "Distance" to graphView.controller::setDistanceAttraction,
@@ -171,6 +173,21 @@ class MainView() : View() {
                     }
                     add(input)
                 }
+
+                label("Louvain settings").apply {
+                    font = Font.font("Tahoma", FontWeight.BOLD, 15.0)
+                }
+                button("Run Louvain") {
+                    action {
+                        louvainController.runLouvain()
+                    }
+                }
+                checkbox("Pause between iterations") {
+                    selectedProperty().addListener { _, _, newValue ->
+                        louvainController.pauseBetweenIterations = newValue
+                    }
+                }
+
                 form {
                     Label("Create vertex").also {
                         add(it)

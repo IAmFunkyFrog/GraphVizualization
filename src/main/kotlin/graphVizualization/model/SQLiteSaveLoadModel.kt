@@ -16,6 +16,7 @@ object Vertices : IdTable<String>() {
     val centrality = double("centrality")
     val centerX = double("centerX")
     val centerY = double("centerY")
+    val community = integer("community")
 }
 
 object Edges : Table() {
@@ -37,6 +38,7 @@ object SQLiteSaveLoadModel {
                     it[centrality] = vertex.centrality
                     it[centerX] = vertex.layoutData.delta.x
                     it[centerY] = vertex.layoutData.delta.y
+                    it[community] = vertex.community
                 }
             for (edge in graph.edges())
                 Edges.insert {
@@ -58,6 +60,7 @@ object SQLiteSaveLoadModel {
                 val vertex = Vertex(value).apply {
                     layoutData.delta = Point2D(row[Vertices.centerX], row[Vertices.centerY])
                     centrality = row[Vertices.centrality]
+                    community = row[Vertices.community]
                 }
                 graph.addVertex(vertex)
                 vertexValueToVertex[value] = vertex
