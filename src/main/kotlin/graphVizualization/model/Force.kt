@@ -26,6 +26,7 @@ abstract class Force {
 
     fun applyForce(region: BurnsHutRegion, vertexTo: Vertex, additionalCoefficient: ((Vertex, Vertex) -> Double)? = null) {
         if (region.vertices.size == 1) {
+            if(region.vertices[0] == vertexTo) return
             applyForce(region.vertices[0], vertexTo, additionalCoefficient)
         } else {
             val distance = region.massCenter.distance(vertexTo.layoutData.delta.x, vertexTo.layoutData.delta.y)

@@ -121,11 +121,17 @@ class GraphController(
 
     private inner class ForceAtlas2Service : ScheduledService<Unit>() {
 
+        private var lastDrawTime: Long = 0
+
         init {
             onSucceeded = EventHandler {
-                for ((v, vView) in graphView.vertices) {
-                    vView.centerX = v.layoutData.delta.x
-                    vView.centerY = v.layoutData.delta.y
+                val currentTime = System.currentTimeMillis()
+                if(currentTime - lastDrawTime >= 1000) {
+                    for ((v, vView) in graphView.vertices) {
+                        vView.centerX = v.layoutData.delta.x
+                        vView.centerY = v.layoutData.delta.y
+                    }
+                    lastDrawTime = currentTime
                 }
             }
         }
