@@ -1,10 +1,9 @@
 package graphVizualization.controller
 
-import graphVizualization.model.HarmonicCentrality
+import graphVizualization.model.harmonicCentrality.HarmonicCentrality
 import graphVizualization.view.GraphView
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.concurrent.Task
-import javafx.scene.control.ProgressBar
 import tornadofx.*
 
 class CentralityController(private val graphView: GraphView) : Controller() {
