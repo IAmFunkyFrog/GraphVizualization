@@ -1,6 +1,6 @@
 package graphVizualization.controller
 
-import graphVizualization.model.SQLiteSaveLoadModel
+import graphVizualization.model.sglite.SQLiteSaveLoadModel
 import graphVizualization.view.GraphView
 import javafx.stage.FileChooser
 import tornadofx.*

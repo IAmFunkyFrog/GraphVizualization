@@ -2,8 +2,8 @@ package graphVizualization.controller
 
 import Vertex
 import graphVizualization.model.Edge
-import graphVizualization.model.Force
-import graphVizualization.model.ForceAtlas2
+import graphVizualization.model.forceAtlas2.Force
+import graphVizualization.model.forceAtlas2.ForceAtlas2
 import graphVizualization.view.EdgeView
 import graphVizualization.view.GraphView
 import graphVizualization.view.VertexView
