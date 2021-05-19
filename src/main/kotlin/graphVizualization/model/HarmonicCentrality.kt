@@ -15,14 +15,9 @@ class HarmonicCentrality(graph: Graph) {
     init {
         val vertexToIndexMap: Map<Vertex, Int> = graph.vertices().mapIndexed { i, v -> v to i }.toMap()
         graph.edges().forEach {
-            /*matrix[vertexToIndexMap[it.vertex1]!!][vertexToIndexMap[it.vertex2]!!] = it.weight
-            matrix[vertexToIndexMap[it.vertex2]!!][vertexToIndexMap[it.vertex1]!!] = it.weight*/
             tempMatrix[vertexToIndexMap[it.vertex1]!!][vertexToIndexMap[it.vertex2]!!] = it.weight
             tempMatrix[vertexToIndexMap[it.vertex2]!!][vertexToIndexMap[it.vertex1]!!] = it.weight
         }
-        /*matrix.indices.forEach { i ->
-            matrix[i][i] = 0.0
-        }*/
         tempMatrix.indices.forEach { i ->
             tempMatrix[i][i] = 0.0
         }
@@ -30,13 +25,6 @@ class HarmonicCentrality(graph: Graph) {
 
 
     fun run() {
-        /*vertexCentralities.indices.forEach { k ->
-            vertexCentralities.indices.forEach { m ->
-                vertexCentralities.indices.forEach { j ->
-                    matrix[m][j] = minOf(matrix[m][j], matrix[m][k] + matrix[k][j])
-                }
-            }
-        }*/
         fun minDistance(dist: DoubleArray, used: BooleanArray): Int {
             var min = Double.POSITIVE_INFINITY
             var minIndex = -1
