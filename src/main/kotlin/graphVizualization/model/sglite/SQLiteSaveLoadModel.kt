@@ -1,6 +1,8 @@
-package graphVizualization.model
+package graphVizualization.model.sglite
 
 import Vertex
+import graphVizualization.model.Edge
+import graphVizualization.model.Graph
 import javafx.geometry.Point2D
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.*
@@ -30,7 +32,7 @@ object SQLiteSaveLoadModel {
         Database.connect("jdbc:sqlite:${file.path}", "org.sqlite.JDBC")
         TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
         transaction {
-            SchemaUtils.drop(Vertices, Edges) 
+            SchemaUtils.drop(Vertices, Edges)
             SchemaUtils.create(Vertices, Edges)
             for (vertex in graph.getVertices())
                 Vertices.insert {
@@ -66,11 +68,13 @@ object SQLiteSaveLoadModel {
                 vertexValueToVertex[value] = vertex
             }
             Edges.selectAll().forEach {
-                graph.addEdge(Edge(
+                graph.addEdge(
+                    Edge(
                     vertexValueToVertex[it[Edges.vertex1].value]!!,
                     vertexValueToVertex[it[Edges.vertex2].value]!!,
                     it[Edges.weight]
-                ))
+                )
+                )
             }
         }
         return graph

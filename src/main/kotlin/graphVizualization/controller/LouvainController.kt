@@ -1,6 +1,6 @@
 package graphVizualization.controller
 
-import graphVizualization.model.Louvain
+import graphVizualization.model.louvain.Louvain
 import graphVizualization.view.GraphView
 import javafx.concurrent.Task
 import tornadofx.Controller

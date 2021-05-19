@@ -1,4 +1,4 @@
-package graphVizualization.model
+package graphVizualization.model.forceAtlas2
 
 import Vertex
 import graphVizualization.view.VertexView

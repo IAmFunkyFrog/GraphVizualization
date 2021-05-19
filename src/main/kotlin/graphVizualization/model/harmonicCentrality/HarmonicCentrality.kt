@@ -1,6 +1,7 @@
-package graphVizualization.model
+package graphVizualization.model.harmonicCentrality
 
 import Vertex
+import graphVizualization.model.Graph
 
 class HarmonicCentrality(graph: Graph) {
     private val vertexCentralities = graph.getVertices().map { VertexCentrality(it, 0.0) }

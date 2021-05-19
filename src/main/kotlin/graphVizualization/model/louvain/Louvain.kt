@@ -1,6 +1,8 @@
-package graphVizualization.model
+package graphVizualization.model.louvain
 
 import Vertex
+import graphVizualization.model.Edge
+import graphVizualization.model.Graph
 
 class Louvain(val graph: Graph) {
     private var adjacencyMap: Map<Vertex, MutableMap<Vertex, Edge> > = graph.getVertices().associateWith { mutableMapOf() }

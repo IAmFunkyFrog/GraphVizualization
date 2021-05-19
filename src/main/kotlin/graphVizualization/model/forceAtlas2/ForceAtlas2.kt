@@ -1,6 +1,7 @@
-package graphVizualization.model
+package graphVizualization.model.forceAtlas2
 
 import Vertex
+import graphVizualization.model.Graph
 import javafx.geometry.Point2D
 import kotlin.math.pow
 

@@ -1,6 +1,6 @@
 package graphVizualization.controller
 
-import graphVizualization.model.Neo4jDBConnection
+import graphVizualization.model.neo4j.Neo4jDBConnection
 import graphVizualization.model.Edge
 import graphVizualization.model.Graph
 import tornadofx.Controller

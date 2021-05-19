@@ -1,6 +1,7 @@
-package graphVizualization.model
+package graphVizualization.model.neo4j
 
 import Vertex
+import graphVizualization.model.Graph
 import javafx.geometry.Point2D
 import org.neo4j.driver.AuthTokens
 import org.neo4j.driver.GraphDatabase
