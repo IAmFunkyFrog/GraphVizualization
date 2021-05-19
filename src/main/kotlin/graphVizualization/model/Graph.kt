@@ -28,8 +28,8 @@ class Graph(
 
     fun removeEdge(edge: Edge) = edges.remove(edge)
 
-    fun vertices() = vertices.toList()
-    fun edges() = edges.toList()
+    fun getVertices() = vertices.toList()
+    fun getEdges() = edges.toList()
 
     companion object {
 

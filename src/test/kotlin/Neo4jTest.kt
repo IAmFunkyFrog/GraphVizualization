@@ -28,7 +28,7 @@ class Neo4jTest {
         addVertex(Vertex("Ira"))
         addVertex(Vertex("Maria"))
 
-        val vertices = vertices()
+        val vertices = getVertices()
 
         addEdge(Edge(vertices[0], vertices[1], 1.0))
         addEdge(Edge(vertices[0], vertices[2], 1.5))
@@ -82,13 +82,13 @@ class Neo4jTest {
                 while(label.text != "Loaded") Thread.sleep(1)
                 assertEquals("Loaded", label.text)
             }
-            val expectedVertices = graph.vertices()
-            val actualVertices = graphView.graph.vertices()
+            val expectedVertices = graph.getVertices()
+            val actualVertices = graphView.graph.getVertices()
             for(vertex in actualVertices) {
                 assert(expectedVertices.any { it.compareTo(vertex) == 0 })
             }
-            val expectedEdges = graph.edges()
-            val actualEdges = graphView.graph.edges()
+            val expectedEdges = graph.getEdges()
+            val actualEdges = graphView.graph.getEdges()
             for(edge in actualEdges) {
                 assert(expectedEdges.any { it.compareTo(edge) == 0 })
             }

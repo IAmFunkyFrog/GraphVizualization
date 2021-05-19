@@ -1,20 +1,17 @@
 package graphVizualization.model
 
 import Vertex
-import java.lang.Exception
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
 
 class HarmonicCentrality(graph: Graph) {
-    private val vertexCentralities = graph.vertices().map { VertexCentrality(it, 0.0) }
+    private val vertexCentralities = graph.getVertices().map { VertexCentrality(it, 0.0) }
     private val matrix: List<MutableList<Double>> =
-        graph.vertices().map { graph.vertices().map { Double.POSITIVE_INFINITY }.toMutableList() }
+        graph.getVertices().map { graph.getVertices().map { Double.POSITIVE_INFINITY }.toMutableList() }
     private val tempMatrix: List<MutableList<Double>> =
-        graph.vertices().map { graph.vertices().map { Double.POSITIVE_INFINITY }.toMutableList() }
+        graph.getVertices().map { graph.getVertices().map { Double.POSITIVE_INFINITY }.toMutableList() }
 
     init {
-        val vertexToIndexMap: Map<Vertex, Int> = graph.vertices().mapIndexed { i, v -> v to i }.toMap()
-        graph.edges().forEach {
+        val vertexToIndexMap: Map<Vertex, Int> = graph.getVertices().mapIndexed { i, v -> v to i }.toMap()
+        graph.getEdges().forEach {
             tempMatrix[vertexToIndexMap[it.vertex1]!!][vertexToIndexMap[it.vertex2]!!] = it.weight
             tempMatrix[vertexToIndexMap[it.vertex2]!!][vertexToIndexMap[it.vertex1]!!] = it.weight
         }

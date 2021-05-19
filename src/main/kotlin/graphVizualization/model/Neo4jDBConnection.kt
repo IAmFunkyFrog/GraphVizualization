@@ -24,7 +24,7 @@ class Neo4jDBConnection(
                     "name" to name
                 ) as Map<String, Any>?
             )
-            for (vertex in graph.vertices()) it.run(
+            for (vertex in graph.getVertices()) it.run(
                 "MATCH (g:Graph {name: \$name}) MERGE (v:Vertex {value: \$value, centerX: \$centerX, centerY: \$centerY, centrality: \$centrality, community: \$community})-[:IN]->(g)",
                 mutableMapOf(
                     "name" to name,
@@ -35,7 +35,7 @@ class Neo4jDBConnection(
                     "community" to vertex.community
                 ) as Map<String, Any>?
             )
-            for (edge in graph.edges()) it.run(
+            for (edge in graph.getEdges()) it.run(
                 "MATCH (g:Graph {name: \$name}) MERGE (v1:Vertex {value: \$value1, centerX: \$centerX1, centerY: \$centerY1, centrality: \$centrality1, community: \$community1})-[:IN]->(g) MERGE (v2:Vertex {value: \$value2, centerX: \$centerX2, centerY: \$centerY2, centrality: \$centrality2, community: \$community2})-[:IN]->(g) MERGE (v1)-[:CONNECTED {weight: \$weight}]-(v2)",
                 mutableMapOf(
                     "name" to name,

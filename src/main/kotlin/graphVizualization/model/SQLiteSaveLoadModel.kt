@@ -32,7 +32,7 @@ object SQLiteSaveLoadModel {
         transaction {
             SchemaUtils.drop(Vertices, Edges) 
             SchemaUtils.create(Vertices, Edges)
-            for (vertex in graph.vertices())
+            for (vertex in graph.getVertices())
                 Vertices.insert {
                     it[id] = vertex.value
                     it[centrality] = vertex.centrality
@@ -40,7 +40,7 @@ object SQLiteSaveLoadModel {
                     it[centerY] = vertex.layoutData.delta.y
                     it[community] = vertex.community
                 }
-            for (edge in graph.edges())
+            for (edge in graph.getEdges())
                 Edges.insert {
                     it[vertex1] = edge.vertex1.value
                     it[vertex2] = edge.vertex2.value

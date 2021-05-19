@@ -14,10 +14,10 @@ class GraphView(
 ) : View() {
 
     var graph: Graph = Graph.EmptyGraph()
-    var vertices = graph.vertices().associateWith {
+    var vertices = graph.getVertices().associateWith {
         VertexView(it)
     } as MutableMap
-    var edges = graph.edges().associateWith {
+    var edges = graph.getEdges().associateWith {
         val vertexView1 = vertices[it.vertex1] ?: throw IllegalArgumentException()
         val vertexView2 = vertices[it.vertex2] ?: throw IllegalArgumentException()
         EdgeView(it, vertexView1, vertexView2)
@@ -71,10 +71,10 @@ class GraphView(
     fun resetGraph(graph: Graph, name: String) {
         this.graph = graph
         this.name.value = name
-        vertices = graph.vertices().associateWith {
+        vertices = graph.getVertices().associateWith {
             VertexView(it)
         } as MutableMap
-        edges = graph.edges().associateWith {
+        edges = graph.getEdges().associateWith {
             val vertexView1 = vertices[it.vertex1] ?: throw IllegalArgumentException()
             val vertexView2 = vertices[it.vertex2] ?: throw IllegalArgumentException()
             EdgeView(it, vertexView1, vertexView2)
